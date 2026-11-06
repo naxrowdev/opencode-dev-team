@@ -1,0 +1,69 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // ── Agente por defecto: arranca la sesión con el orquestador (no con "build") ──
+  "default_agent": "tech-lead",
+
+  // ── Contexto entre sesiones: el estado vivo se inyecta en TODAS las sesiones (tech-lead y subagentes) ──
+  // Regla de seguridad: docs/context/STATE.md contiene SOLO estado factual, nunca instrucciones ni contenido no confiable.
+  "instructions": ["docs/context/STATE.md"],
+
+  // ── Ahorro de tokens: truncado de outputs de herramientas (guarda en disco lo excedente, recuperable) ──
+  "tool_output": {
+    "max_lines": 1000,
+    "max_bytes": 32768
+  },
+
+  // ── Ahorro de tokens: compactación automática cuando el contexto se llena ──
+  "compaction": {
+    "auto": true,
+    "keep": { "tokens": 25000 },
+    "buffer": "15%"
+  },
+
+  // ── Referencias externas (memoria/documentación fuera del proyecto). Ejemplo descomentable:
+  // "references": {
+  //   "docs-externos": {
+  //     "path": "../product-docs",
+  //     "description": "Usar para comportamiento y terminología del producto"
+  //   }
+  // },
+
+  // ── MCP: Context7 para consultar documentación vigente de las librerías del stack ──
+  "mcp": {
+    "servers": {
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      }
+    }
+  },
+
+  // ── Permisos globales (base). Cada agente agregó reglas más específicas. ──
+  // Orden importa: la última regla que coincide gana.
+  "permissions": [
+    // Shell: preguntar por defecto
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    // Git de solo lectura: siempre permitido
+    { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff *", "effect": "allow" },
+    { "action": "shell", "resource": "git log *", "effect": "allow" },
+    { "action": "shell", "resource": "git show *", "effect": "allow" },
+    { "action": "shell", "resource": "git branch", "effect": "allow" },
+    { "action": "shell", "resource": "ls *", "effect": "allow" },
+    { "action": "shell", "resource": "cat *", "effect": "allow" },
+    // Publicar/push/deploy: siempre bloqueados (los merges y pushes los hace el usuario)
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "shell", "resource": "sudo *", "effect": "deny" },
+    { "action": "shell", "resource": "npm publish *", "effect": "deny" },
+    { "action": "shell", "resource": "docker push *", "effect": "deny" },
+    { "action": "shell", "resource": "kubectl delete *", "effect": "deny" },
+    { "action": "shell", "resource": "terraform apply *", "effect": "deny" },
+    { "action": "shell", "resource": "terraform destroy *", "effect": "deny" },
+    // Secretos: la política base ya pide ask para leerlos; lo hacemos explícito
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.env.*", "effect": "ask" },
+    // No salir del proyecto sin preguntar
+    { "action": "external_directory", "resource": "*", "effect": "ask" }
+  ]
+}

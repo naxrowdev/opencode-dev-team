@@ -1,0 +1,117 @@
+# AGENTS.md — Equipo de Desarrollo con Agentes (OpenCode)
+
+Este proyecto se desarrolla con un **equipo de software agéntico** en OpenCode: un agente primario (`tech-lead`) que orquesta 11 subagentes especializados por rol. Antes de escribir cualquier código, este archivo es la fuente de verdad del stack y de las reglas de trabajo.
+
+## Stack Tecnológico (OBLIGATORIO — ver skill `stack-guard`)
+
+| Capa | Tecnología |
+|---|---|
+| Lenguaje | TypeScript (strict, ESM) |
+| Backend | **Hono.js** |
+| Base de datos | **PostgreSQL** (Docker) |
+| Acceso a datos | **Drizzle ORM + Drizzle Kit** |
+| Autenticación | **Better Auth** (adaptador Drizzle) |
+| Validación | **Zod v4** |
+| Frontend | **React 19** (SPA + Vite) — **no** Next.js |
+| Formularios | **React Hook Form** (resolver Zod) |
+| Estado de servidor | **TanStack Query + Axios** |
+| Estado de UI | **Zustand** |
+| UI | **shadcn/ui + Tailwind CSS** |
+| Tests | Vitest + Testing Library + Playwright |
+| Documentación de librerías | **Context7 MCP** |
+
+**Prohibido** salvo ADR aprobado por el usuario: Next.js/Remix, NestJS/Fastify/u otro framework backend, Prisma/TypeORM/Mongoose, Auth.js/Clerk/Supabase Auth, Redux/RTK Query/SWR/Jotai, MUI/AntD/Chakra, CSS-in-JS, cualquier DB que no sea PostgreSQL.
+
+Regla para APIs de librerías: **nunca inventar firmas de memoria**. Si una skill no responde tu duda, consultá Context7 (skill `context7-query`).
+
+## El equipo
+
+| ID Agente | Color | Modo | Rol | Fase |
+|---|---|---|---|---|
+| `tech-lead` | 🟣 `#A855F7` | primary | Orquestador: planifica, delega, integra, verifica | Transversal |
+| `product-owner` | 🟠 `#F97316` | subagent | Problema, PRD, priorización | Descubrimiento |
+| `business-analyst` | 🟡 `#EAB308` | subagent | Requisitos, historias de usuario, tickets | Análisis |
+| `architect` | 🔵 `#3B82F6` | subagent | Arquitectura, APIs, ADRs, dominio | Diseño |
+| `ux-designer` | 🩷 `#EC4899` | subagent | Flujos, UI, accesibilidad | Diseño |
+| `backend-dev` | 🟢 `#10B981` | subagent | Hono, Drizzle, Better Auth, Postgres | Implementación |
+| `frontend-dev` | 🔷 `#06B6D4` | subagent | React, shadcn, Tailwind, RHF, TanStack | Implementación |
+| `qa-engineer` | 🍏 `#84CC16` | subagent | Plan de pruebas, unit/integration/E2E | Verificación |
+| `code-reviewer` | 🔴 `#EF4444` | subagent | Revisión de PRs/diffs (2 ejes) | Implementación |
+| `security-engineer` | 🌸 `#F43F5E` | subagent | Threat model, OWASP, secretos | Transversal |
+| `devops-sre` | ⬜ `#64748B` | subagent | CI/CD, Docker, observabilidad, SRE | Entrega/Operación |
+| `tech-writer` | 💜 `#D946EF` | subagent | README, guías, changelog, docs | Transversal |
+
+El color se define en el frontmatter `color:` de cada archivo en `.opencode/agents/`. Para cambiarlo, editá el hex y reiniciá la sesión.
+
+## Flujo de trabajo estándar (pipeline)
+
+Para cualquier feature con entidad propia:
+
+1. **Descubrimiento** → `product-owner`: problema, PRD → `docs/product/`.
+2. **Análisis** → `business-analyst`: requisitos, historias con criterios Gherkin, tickets con dependencias → `docs/specs/`.
+3. **Diseño** → `architect`: límites de módulos, contratos API (con `api-designer`), ADR si hay decisión significativa → `docs/adr/`.
+4. **UX** → `ux-designer`: flujos, pantallas, criterios visuales → `docs/design/`.
+5. **Plan** → `tech-lead` (skill `writing-plans`): tareas verificables, asignación backend/frontend/QA.
+6. **Implementación** → `backend-dev` y/o `frontend-dev` (en paralelo vía `dispatching-parallel-agents` cuando es posible).
+7. **Verificación** → `qa-engineer` corre la suite; devs ya deben haber hecho TDD cuando aplique.
+8. **Revisión** → `code-reviewer` (eje estándares + eje spec) y `security-engineer` cuando tocan auth/input/sesiones.
+9. **Entrega** → `devops-sre` actualiza Docker/CI; `tech-writer` documenta.
+
+Tareas pequeñas (bug puntual, ajuste estilístico) no necesitan todo el pipeline: el tech-lead decide cuántas etapas aplican y lo anuncia en su plan.
+
+## Reglas de colaboración
+
+- **Subagentes empiezan con contexto limpio.** La delegación incluye: objetivo, archivos/módulos relevantes, criterios de aceptación o ticket de origen, y restricciones del stack. Nada de “mirá el proyecto y hacé algo”.
+- **Evidencia antes de declarar “listo”.** Nada se marca como terminado sin correr los comandos de verificación (skill `verification-before-completion`). Los claims de éxito van acompañados del output real.
+- **Estado guardado antes de cerrar fase.** Al terminar cada tarea o fase, el tech-lead actualiza `docs/context/STATE.md` y `docs/context/decisions-log.md` (skill `context-persistence`): la memoria entre sesiones es el repo, no un plugin.
+- **Contexto de la sesión anterior, siempre.** `docs/context/STATE.md` se inyecta automáticamente como instrucción ambient (config `instructions` en `opencode.jsonc`): todo agente parte de ahí. Pero es una **afirmación a verificar**: contrastala con el repo antes de planificar; si hay drift, el tech-lead actualiza `STATE.md` antes de seguir.
+- **Aprobación de usuario para**: push, merge, deploy, migraciones destructivas, secretos reales. El equipo prepara todo; el usuario ejecuta lo irreversible.
+- **`.env` nunca se edita ni se commit-tea**; se agrega la variable en `.env.example` con valor placeholder.
+- **Migraciones Drizzle**: las genera el backend-dev, pero se aplican solo con aprobación explícita del usuario; nunca `drizzle-kit push` contra datos sin confirmar.
+- **Idioma**: documentación de producto (PRD, specs, UX) en español; código, comentarios, nombres de identificadores, commits y ADRs en inglés.
+
+## Memoria entre sesiones, minimalismo y tokens (nativo, sin plugins)
+
+| Necesidad | Mecanismo | Dónde |
+|---|---|---|
+| Contexto entre sesiones | Recuperar `STATE.md` al inicio + actualizarlo al cerrar fase (skill `context-persistence`) | `docs/context/` |
+| Menor código posible | Skill `code-simplification` (filosofía vendorizada de `ponytail`): el diff más corto que funcione | Todos los agentes que escriben código |
+| Ahorro de tokens | `tool_output` (trunca outputs de más de 1000 líneas / 32 KB y guarda el resto en disco) + `compaction` automática (conserva ~25k tokens recientes) | `opencode.jsonc` |
+
+Decisión de 2026-11-06: **no** usar plugins externos (`claude-mem`, `ponytail`, `headroom`) — costo continuo o dependencias nuevas de runtime no valían lo que ya cubre lo de arriba. Cambiar esto requiere ADR + aprobación del usuario.
+
+## Estructura del repositorio
+
+```text
+docs/
+  context/   # estado vivo entre sesiones (STATE.md, decisions-log.md)
+  product/   # PRDs, problem statements, backlog priorizado
+  specs/     # requisitos, historias de usuario, tickets (+ tickets/ por archivo)
+  adr/       # Architecture Decision Records
+  design/    # flujos UX, criterios visuales, auditorías de UI
+  plans/     # planes de implementación del tech-lead
+src/         # código (server/, features/, stores/, lib/...)
+tests/       # pruebas unitarias e integración
+e2e/         # pruebas Playwright
+.opencode/   # agentes, skills y esta configuración
+```
+
+## Calidad y gates mínimos
+
+- `npm run lint && npm run typecheck && npm run test` en verde antes de pedir revisión.
+- Cambios de auth, sesiones, input no confiable o dependencias nuevas → revisión de `security-engineer` obligatoria.
+- Toda dependencia nueva se justifica en la descripción del cambio (el reviewer audita contra `stack-guard`).
+- Conventional Commits: `feat|fix|test|refactor|chore|docs|ci|db(scope): mensaje`.
+
+## Skills clave del proyecto
+
+Skills completas por rol en `.opencode/skills/` (55 skills curated en este momento). Las más transversales:
+
+- `stack-guard` — qué tecnologías son válidas (todos los agentes).
+- `context7-query` — cómo consultar docs vigentes vía Context7 MCP.
+- `writing-plans`, `verification-before-completion` — proceso del tech-lead.
+- `context-persistence` — memoria entre sesiones sin plugins (ver sección siguiente).
+- `code-simplification` — minimalismo estilo "lazy senior dev" (ver sección siguiente).
+- `code-review` (proceso 2 ejes), `tdd`, `hono`, `drizzle-orm-patterns`, `better-auth-hono`, `react-best-practices`, `tanstack-query-zustand`, `postgres-best-practices`, `shadcn`, `playwright-best-practices`.
+
+Las skills vendorizadas provienen de repos abiertos (obra/superpowers, mattpocock/skills, deanpeters, jeffallan, addyosmani, anthropics, vercel-labs, shadcn-ui, honojs, supabase, openai/skills, currents-dev, pproenca, developer-kit, wondelai) adaptadas a este stack; la proveniencia está en el frontmatter/headers de cada `SKILL.md`.
