@@ -1,23 +1,25 @@
 # Agentic Dev Team — Equipo de desarrollo con agentes (OpenCode)
 
-**Repo:** `naxrowdev/opencode-dev-team` · **Versión:** `0.1.0` (pre-release, 2026-11-06) — se promueve a `1.0.0` tras validar el equipo en un proyecto real. Ver `CHANGELOG.md` y `VERSION`.
+**Repo:** `naxrowdev/opencode-dev-team` · **Versión:** `0.2.0` (2026-11-06) — se promueve a `1.0.0` tras validar el equipo en un proyecto real. Ver `CHANGELOG.md` y `VERSION`.
 
 Configuración de proyecto para OpenCode V2 que arma un **equipo completo de desarrollo de software agéntico**: 1 agente primario orquestador (`tech-lead`) + 11 subagentes especializados por rol, con 55 skills curated y vendorizadas en el repo (sin symlinks ni telemetría) y Context7 MCP para documentación vigente. Sin plugins externos: memoria entre sesiones, minimalismo de código y ahorro de tokens se logran con mecanismos nativos (ver abajo).
 
 ## Uso (instalar en otro proyecto)
 
-Para publicar este repo por primera vez, seguí `docs/guides/setup-github.md` (comandos los ejecuta el humano).
+El kit se **inyecta** en un proyecto existente con `kit/install.sh`: copia agentes, skills y la config, y siembra un `docs/context/` **vacío** — la memoria del kit (`STATE.md`, `decisions-log.md`) nunca viaja; la del proyecto se llena de cero. Guía completa en `docs/guides/installing-into-a-project.md`.
 
 ```bash
-# 1. Copiar la configuración dentro de tu proyecto
 git clone git@github.com:naxrowdev/opencode-dev-team.git /tmp/opencode-dev-team
-cp -r /tmp/opencode-dev-team/.opencode /tmp/opencode-dev-team/opencode.jsonc \
-      /tmp/opencode-dev-team/AGENTS.md /tmp/opencode-dev-team/.env.example tu-proyecto/
 
-# 2. Abrir OpenCode en tu proyecto
-cd tu-proyecto
-opencode
+sh /tmp/opencode-dev-team/kit/install.sh --dry-run /ruta/a/mi-proyecto   # previsualizar (no escribe nada)
+sh /tmp/opencode-dev-team/kit/install.sh /ruta/a/mi-proyecto            # instalar
+
+sh /tmp/opencode-dev-team/kit/selftest.sh                               # 34 asserts sobre el instalador
 ```
+
+Re-instalar solo refresca archivos kit-owned: `docs/context/` queda intacto.
+
+Para publicar este repo por primera vez, seguí `docs/guides/setup-github.md` (comandos los ejecuta el humano).
 
 El primer agente disponible es `tech-lead`, que orquesta al resto. Conversación típica:
 
@@ -35,8 +37,10 @@ AGENTS.md             # reglas del repo: stack fijo, pipeline, convenciones
 .opencode/
   agents/             # 12 agentes (tech-lead primary + 11 subagents)
   skills/             # 55 skills vendorizadas + adaptadas
+  kit.json            # marcador generado por el installer en el proyecto destino
 docs/                 # artefactos del pipeline (product/specs/adr/design/plans...)
   context/            # STATE.md + decisions-log.md: memoria entre sesiones
+kit/                  # install.sh + templates/ (contexto vacío) + selftest.sh: lo que viaja al proyecto
 ```
 
 ## Memoria, minimalismo y tokens (nativo, sin plugins)

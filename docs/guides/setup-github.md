@@ -37,12 +37,16 @@ git push origin v0.1.0
 
 ## 3. Distribuir a otro proyecto (después de publicar)
 
+El kit se inyecta en el proyecto destino con el installer — no se copia a mano. La guía completa está en `docs/guides/installing-into-a-project.md`.
+
 ```bash
 git clone git@github.com:naxrowdev/opencode-dev-team.git /tmp/opencode-dev-team
-cp -r /tmp/opencode-dev-team/.opencode /tmp/opencode-dev-team/opencode.jsonc \
-      /tmp/opencode-dev-team/AGENTS.md /tmp/opencode-dev-team/.env.example tu-proyecto/
-cd tu-proyecto && opencode
+sh /tmp/opencode-dev-team/kit/install.sh --dry-run /ruta/a/mi-proyecto   # previsualizar
+sh /tmp/opencode-dev-team/kit/install.sh /ruta/a/mi-proyecto             # instalar
+cd /ruta/a/mi-proyecto && opencode
 ```
+
+El proyecto destino arranca con `docs/context/STATE.md` vacío: la memoria del kit no viaja. `git add` y push los ejecuta el usuario en el proyecto destino.
 
 ## Checklist antes de push
 

@@ -1,0 +1,15 @@
+# Kit-owned paths installed into the target project (relative to the kit root).
+# Lines starting with '#' and blank lines are ignored.
+# A trailing '/' means "create this empty directory" (git cannot track empty dirs).
+
+.opencode/agents
+.opencode/skills
+docs/adr/README.md
+docs/context/README.md
+docs/design/README.md
+docs/guides/README.md
+docs/plans/README.md
+docs/product/README.md
+docs/security/README.md
+docs/specs/README.md
+docs/specs/tickets/

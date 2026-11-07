@@ -1,0 +1,11 @@
+# Paths that belong to the kit repository itself and MUST NEVER travel to a
+# target project. install.sh validates that no include.txt entry matches these;
+# selftest.sh asserts none of them exist after an install.
+
+README.md
+CHANGELOG.md
+VERSION
+docs/guides/setup-github.md
+kit
+roles_en_el_ciclo_de_desarrollo_de_software.md
+stack-tecnologico-agentes-ia.md

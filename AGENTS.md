@@ -78,7 +78,7 @@ Tareas pequeñas (bug puntual, ajuste estilístico) no necesitan todo el pipelin
 | Menor código posible | Skill `code-simplification` (filosofía vendorizada de `ponytail`): el diff más corto que funcione | Todos los agentes que escriben código |
 | Ahorro de tokens | `tool_output` (trunca outputs de más de 1000 líneas / 32 KB y guarda el resto en disco) + `compaction` automática (conserva ~25k tokens recientes) | `opencode.jsonc` |
 
-Decisión de 2026-11-06: **no** usar plugins externos (`claude-mem`, `ponytail`, `headroom`) — costo continuo o dependencias nuevas de runtime no valían lo que ya cubre lo de arriba. Cambiar esto requiere ADR + aprobación del usuario.
+Cambiar este mecanismo (o agregar plugins externos de memoria/contexto) requiere ADR + aprobación del usuario.
 
 ## Estructura del repositorio
 
@@ -105,7 +105,7 @@ e2e/         # pruebas Playwright
 
 ## Skills clave del proyecto
 
-Skills completas por rol en `.opencode/skills/` (55 skills curated en este momento). Las más transversales:
+Skills completas por rol en `.opencode/skills/`. Las más transversales:
 
 - `stack-guard` — qué tecnologías son válidas (todos los agentes).
 - `context7-query` — cómo consultar docs vigentes vía Context7 MCP.
@@ -114,4 +114,4 @@ Skills completas por rol en `.opencode/skills/` (55 skills curated en este momen
 - `code-simplification` — minimalismo estilo "lazy senior dev" (ver sección siguiente).
 - `code-review` (proceso 2 ejes), `tdd`, `hono`, `drizzle-orm-patterns`, `better-auth-hono`, `react-best-practices`, `tanstack-query-zustand`, `postgres-best-practices`, `shadcn`, `playwright-best-practices`.
 
-Las skills vendorizadas provienen de repos abiertos (obra/superpowers, mattpocock/skills, deanpeters, jeffallan, addyosmani, anthropics, vercel-labs, shadcn-ui, honojs, supabase, openai/skills, currents-dev, pproenca, developer-kit, wondelai) adaptadas a este stack; la proveniencia está en el frontmatter/headers de cada `SKILL.md`.
+La proveniencia de las skills vendorizadas está en el frontmatter/header de cada `SKILL.md`; los cambios de stack o de skills requieren ADR.

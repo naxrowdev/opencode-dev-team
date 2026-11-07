@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-06
+
+### Added
+
+- `kit/install.sh`: injects the dev team into a target project — copies kit-owned files
+  (`.opencode/agents`, `.opencode/skills`, `docs/*/README.md`), seeds an **empty** project
+  context from `kit/templates/`, and never carries over this repository's own state.
+- `kit/include.txt` / `kit/exclude.txt`: explicit, self-documenting manifest of what travels
+  and what never does; the installer validates that no included path matches an exclusion.
+- `kit/templates/`: `STATE.md` + `decisions-log.md` (empty, placeholder-resolved on install)
+  and a project-appropriate `.gitignore` (without this repo's kit-only ignore lines).
+- `kit/selftest.sh`: 34 assertions — fresh install carries no kit history, context is
+  write-once across re-runs, pre-existing project config is preserved and offered as
+  `*.kit-new`, guards refuse installing into the kit repo itself or over a foreign `.opencode/`.
+- Install marker `.opencode/kit.json` (kit version, date, source) in the target project.
+- Guide `docs/guides/installing-into-a-project.md` (replaces the broken manual `cp -r`
+  recipe, which copied no `docs/` tree and left `instructions` pointing at a missing file).
+
+### Changed
+
+- `AGENTS.md` turned project-agnostic: skill-count and vendoring provenance removed (they
+  live in this repo's README and each skill's frontmatter), the plugins-decision line is
+  now a rule instead of kit history.
+- `docs/guides/setup-github.md` and `README.md` now point to `kit/install.sh` for
+  distributing to other projects; `VERSION` bumped 0.1.0 → 0.2.0.
+
+_[0.2.0]: el kit ya no contamina el contexto de los proyectos que lo consumen._
+
 ## [0.1.0] - 2026-11-06
 
 ### Added

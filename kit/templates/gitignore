@@ -1,0 +1,28 @@
+# ── Secretos (NUNCA commitear .env real) ──
+.env
+.env.*
+!.env.example
+
+# ── Dependencias y builds ──
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+# ── Tests ──
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# ── Sistema / editor ──
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*.tmp
+*.log
+
+# ── Salidas de herramientas (viven en ~/.local/share/opencode, esto es preventivo) ──
+tool-output/

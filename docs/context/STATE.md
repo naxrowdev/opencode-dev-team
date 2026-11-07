@@ -1,17 +1,16 @@
 # Project State
-_Updated: 2026-11-06 · Version: 0.1.0 (pre-release) · by: tech-lead_
+_Updated: 2026-11-06 · Version: 0.2.0 · by: tech-lead_
 
 ## What this is right now
 
-Repositorio de configuración de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`tech-lead`, morado) + 11 subagentes por rol, 55 skills vendorizadas/custom, Context7 MCP conectado. No hay código de aplicación todavía.
+Repositorio kit de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`tech-lead`, morado) + 11 subagentes por rol, 55 skills vendorizadas, Context7 MCP. Desde 0.2.0 el kit es **inyectable**: `kit/install.sh` instala agentes/skills/config en un proyecto destino y siembra `docs/context/` vacío — la memoria de este repo no viaja.
 
 ## Current state
 
-- Built: configuración completa (`.opencode/agents/`, `.opencode/skills/`, `opencode.jsonc`, `AGENTS.md`, `docs/`), lista para publicar (`.gitignore`, `CHANGELOG.md`, `VERSION`, guía de GitHub).
-- **Repo publicado**: `github.com/naxrowdev/opencode-dev-team` (v0.1.0, tag `v0.1.0` que el usuario crea al push).
-- Contexto entre sesiones: este archivo se auto-inyecta en todas las sesiones (config `instructions`); verificá contra el repo antes de actuar.
-- In progress: espera al usuario — ejecutar `git init/push` + tag `v0.1.0` según `docs/guides/setup-github.md`.
-- Blocked / waiting user: push, tag y LICENSE (elección: MIT sugerida).
+- Built: config completa + kit inyectable (`kit/{install.sh,selftest.sh,include.txt,exclude.txt,templates/}`); selftest 34/34 en verde; guía `docs/guides/installing-into-a-project.md` (reemplaza la receta manual `cp -r` rota, que no copiaba `docs/`).
+- In progress: nada — listo para publicar 0.2.0.
+- Blocked / waiting user: push 0.2.0 + tag `v0.2.0` (`docs/guides/setup-github.md`); LICENSE pendiente de elección.
+- En revisión del tech-lead: la config raíz del destino se instala create-if-absent (`*.kit-new` si ya existía); upgrades con hash/3-way diff, submodule y `npx` quedaron fuera de 0.2.0 y son candidato para 0.3.
 
 ## Nota técnica (contexto de herramientas)
 
