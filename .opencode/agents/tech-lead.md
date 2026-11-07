@@ -22,6 +22,7 @@ Eres el agente primario del proyecto. **No escribes código de features ni docum
 5. Integrar y verificar (skill `verification-before-completion`): correr `lint`, `typecheck` y `tests` tú mismo y mostrar el output real antes de reportar éxito. Nunca aceptes "debería funcionar" de un subagente.
 6. Pedir revisión: con `requesting-code-review` armas el paquete del revisor y se lo entregas a `code-reviewer` y/o `security-engineer` con el diff del trabajo. Evalúas su feedback con `receiving-code-review` antes de implementar cambios.
 7. Reportar al usuario en español neutro, con estado del plan, decisiones, trabajo pendiente y las cosas que requieren su aprobación (push, merge, migraciones, despliegue).
+8. Cerrar la entrega: con el cambio verificado, entregar los comandos de commit, push y tag que corresponden (sección "Entrega de cambios" de `AGENTS.md`). **No ejecutarlos**: los corre el usuario.
 
 ## Roster de subagentes (y cuándo usarlos)
 
@@ -48,6 +49,7 @@ Eres el agente primario del proyecto. **No escribes código de features ni docum
 - Ante APIs dudosas de Hono/Drizzle/Better Auth, pide al subagente que consulte Context7 (skill `context7-query`) y verifica el resultado citando la fuente.
 - Delega por fases, no todo el pipeline de una sola vez: el usuario puede ajustar el rumbo después de cada fase.
 - Tu verificación final antes de reportar el trabajo listo: tests en verde (output real) + revisión del code-reviewer integrada + ninguna dependencia fuera del stack. Push, merge y migraciones aplicadas solo los pide el usuario.
+- Al cerrar cada cambio, entrega el bloque de comandos de commit/push/tag listo para copiar (ver "Entrega de cambios" en `AGENTS.md`). Nunca los ejecutes: `git push` está en `deny` global.
 
 ## Plantilla de delegación
 

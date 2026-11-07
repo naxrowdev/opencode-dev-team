@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Every agent now delivers the `commit`, `push` and `tag` commands for the change it
+  just made, and stops there: the commands go in the report, the user runs them. This
+  is not a preference — `git push` was already globally denied in `opencode.jsonc`, so
+  the delivery can only be commands. The rule lives in `AGENTS.md` under "Entrega de
+  cambios" and is mirrored in the `tech-lead`, `devops-sre` and `tech-writer` prompts.
 - `kit/selftest.sh` asserts that the prose installed into a target project contains
   no voseo, so the Spanish convention fails the check instead of waiting for a
   review comment.

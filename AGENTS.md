@@ -65,10 +65,40 @@ Tareas pequeñas (bug puntual, ajuste estilístico) no necesitan todo el pipelin
 - **Evidencia antes de declarar “listo”.** Nada se marca como terminado sin correr los comandos de verificación (skill `verification-before-completion`). Los claims de éxito van acompañados del output real.
 - **Estado guardado antes de cerrar fase.** Al terminar cada tarea o fase, el tech-lead actualiza `docs/context/STATE.md` y `docs/context/decisions-log.md` (skill `context-persistence`): la memoria entre sesiones es el repo, no un plugin.
 - **Contexto de la sesión anterior, siempre.** `docs/context/STATE.md` se inyecta automáticamente como instrucción ambient (config `instructions` en `opencode.jsonc`): todo agente parte de ahí. Pero es una **afirmación a verificar**: contrástala con el repo antes de planificar; si hay drift, el tech-lead actualiza `STATE.md` antes de seguir.
-- **Aprobación de usuario para**: push, merge, despliegue, migraciones destructivas, secretos reales. El equipo prepara todo; el usuario ejecuta lo irreversible.
+- **Aprobación de usuario para**: push, merge, despliegue, migraciones destructivas, secretos reales. El equipo prepara todo y entrega los comandos; el usuario ejecuta lo irreversible.
 - **`.env` nunca se edita ni se commit-tea**; se agrega la variable en `.env.example` con valor placeholder.
 - **Migraciones Drizzle**: las genera el backend-dev, pero se aplican solo con aprobación explícita del usuario; nunca `drizzle-kit push` contra datos sin confirmar.
 - **Idioma**: documentación de producto (PRD, specs, UX) en **español neutro** (sin voseo: “tú” e imperativo estándar); código, comentarios, nombres de identificadores, commits y ADRs en inglés.
+
+## Entrega de cambios: commit, push y tag
+
+Al cerrar cada cambio pedido, el agente **entrega los comandos** de commit, push y tag
+que corresponden a lo realizado — **no los ejecuta**. El usuario corre lo irreversible.
+No es una preferencia: `git push` está en `deny` global en `opencode.jsonc`, así que la
+entrega es necesariamente de comandos, nunca de ejecución.
+
+| Situación | Qué entregar |
+|---|---|
+| Hay cambios en el working tree | `git add <paths>` + `git commit -m "<mensaje>"` |
+| El cambio se publica en una rama | + `git push origin <rama>` |
+| El cambio es una release (`VERSION` + `CHANGELOG.md` actualizados) | + `git tag v<VERSION>` + `git push origin v<VERSION>` |
+
+Reglas de la entrega:
+
+- Un bloque de comandos listo para copiar, con el `cd` al repo cuando haga falta y el
+  resultado esperado de cada paso.
+- El mensaje de commit sigue Conventional Commits:
+  `feat|fix|test|refactor|chore|docs|ci|db(scope): mensaje`.
+- `git add` con **paths explícitos** del cambio, nunca `.` ni `-A`: el working tree
+  puede tener cambios ajenos que no forman parte de este cambio.
+- El tag se propone solo cuando `VERSION` cambió; su nombre es el de `VERSION` con
+  prefijo `v` (`v0.2.1`).
+- Si el cambio todavía no está listo para publicarse, entrega solo el commit y
+  explica qué falta.
+- Si el cambio no toca archivos (por ejemplo, solo una explicación), dilo: no hay
+  comandos que entregar.
+- Antes de proponer los paths, corre `git status --short` y `git diff --stat` (están
+  permitidos) para listar exactamente lo que cambió.
 
 ## Memoria entre sesiones, minimalismo y tokens (nativo, sin plugins)
 

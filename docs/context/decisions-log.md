@@ -4,6 +4,10 @@ Cada entrada: fecha — decisión, no alternativas. 2-4 líneas: quién decide, 
 
 ---
 
+## 2026-11-07 — El agente entrega los comandos de commit/push/tag, not los ejecuta
+
+Tech-lead con el usuario: al cerrar cada cambio, el equipo entrega el bloque de comandos de commit, push y tag según lo que se realizó, pero no los ejecuta — el usuario corre lo irreversible. No es una preferencia: `git push` ya estaba en `deny` global en `opencode.jsonc`, así que la entrega es de comandos y nunca de ejecución. El bloque usa Conventional Commits, `git add` con paths explícitos (nunca `.` ni `-A`, porque el working tree puede tener cambios ajenos) y tag `v<VERSION>` solo cuando `VERSION` cambia. La regla vive en `AGENTS.md` (sección "Entrega de cambios") y se replica en los prompts de `tech-lead`, `devops-sre` y `tech-writer`. Archivos: `AGENTS.md`, `.opencode/agents/tech-lead.md`, `.opencode/agents/devops-sre.md`, `.opencode/agents/tech-writer.md`, `docs/context/STATE.md`, `CHANGELOG.md`.
+
 ## 2026-11-07 — Español neutro en la prosa del kit, not voseo rioplatense
 
 Tech-lead con el usuario: la prosa del kit (12 prompts de agente, `README.md`, `AGENTS.md`, la guía de instalación y los mensajes del instalador/selftest) pasa a español neutro — segunda persona "tú" e imperativo estándar, sin voseo. El vocabulario Git/CLI (`push`, `commit`, `merge`) queda en inglés; "deploy" en prosa pasa a "despliegue". La regla queda en `AGENTS.md` (Idioma) y en los prompts de `tech-writer`, `product-owner`, `business-analyst` y `ux-designer`; `kit/selftest.sh` asserta que la prosa instalada no tenga voseo. Las entradas históricas de este log conservan su redacción original (log append-only). El versionado se difiere: no se bumpea `VERSION` en este cambio. Archivos: `.opencode/agents/*.md`, `AGENTS.md`, `README.md`, `docs/guides/installing-into-a-project.md`, `kit/install.sh`, `kit/selftest.sh`, `docs/adr/0001-use-neutral-spanish-in-kit-documentation.md`.

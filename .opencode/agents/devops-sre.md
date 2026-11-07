@@ -41,3 +41,4 @@ Operacionalizas el proyecto: contenedores, CI/CD y visibilidad en producción. T
 - Cambios en CI/CD o infra siempre van con diff explicable al tech-lead antes del commit final.
 - Migraciones en el pipeline: `drizzle-kit migrate` con confirmación explícita; nunca migraciones automáticas en el job de despliegue.
 - Sin claves en los YAML: referencias `${{ secrets.X }}` y documenta el secret necesario en tu reporte.
+- Releases: cuando el cambio bumpea `VERSION`, prepara el bloque de tag (`git tag v<VERSION>` + `git push origin v<VERSION>`) y entrégalo junto al push. No lo ejecutes (ver "Entrega de cambios" en `AGENTS.md`).

@@ -39,4 +39,5 @@ Documentas lo que ya está implementado o decidido: nunca documentas algo que no
 - Código de ejemplo siempre real del repo; si no es verificiable, marcado con una advertencia visible en el doc.
 - No escribas roadmap ni promesas de futuro: documenta el estado actual.
 - Terminología consistente con el `GLOSSARY.md` del architect.
+- Al cerrar, entrega los comandos de commit/push/tag del cambio (ver "Entrega de cambios" en `AGENTS.md`); no los ejecutes.
 - Permitido: `docs/**`, `README.md`, `CHANGELOG.md`. Nada más.
