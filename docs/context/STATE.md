@@ -1,5 +1,5 @@
 # Project State
-_Updated: 2026-11-06 · Version: 0.2.0 · by: tech-lead_
+_Updated: 2026-11-06 · Version: 0.2.1 · by: tech-lead_
 
 ## What this is right now
 
@@ -7,10 +7,11 @@ Repositorio kit de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`t
 
 ## Current state
 
-- Built: config completa + kit inyectable (`kit/{install.sh,selftest.sh,include.txt,exclude.txt,templates/}`); selftest 34/34 en verde; guía `docs/guides/installing-into-a-project.md` (reemplaza la receta manual `cp -r` rota, que no copiaba `docs/`).
-- In progress: nada — listo para publicar 0.2.0.
-- Blocked / waiting user: push 0.2.0 + tag `v0.2.0` (`docs/guides/setup-github.md`); LICENSE pendiente de elección.
-- En revisión del tech-lead: la config raíz del destino se instala create-if-absent (`*.kit-new` si ya existía); upgrades con hash/3-way diff, submodule y `npx` quedaron fuera de 0.2.0 y son candidato para 0.3.
+- Built: v0.2.1 — el instalador valida el target ANTES de crear nada en disco: guard de paths placeholder pegados desde la documentación (`/ruta/...`, `/path/to/...`, `/your/...`), error amable de `mkdir`, y flujo principal = `git clone` del kit **dentro del proyecto** + `sh opencode-dev-team/kit/install.sh` desde la raíz (sin `cd` al clon, sin argumentos) con hint de limpieza (`rm -rf opencode-dev-team`) y guard que corta si el destino ES el clon. Origen: primer caso real de uso (bloque del README pegado verbatim → `mkdir: Permission denied` y proyecto destino vacío). Selftest 50/50 en verde.
+- First real project: `~/Proyectos/web-opencode-dev-team` instalado con éxito (12 agentes, 55 skills, `docs/context/` sembrado vacío); el pipeline completo aún no se validó ahí.
+- In progress: nada.
+- Blocked / waiting user: push 0.2.1 + tag `v0.2.1` (`docs/guides/setup-github.md`); LICENSE pendiente de elección.
+- En revisión del tech-lead: upgrades con hash/3-way diff, submodule y `npx` siguen como candidato para 0.3.
 
 ## Nota técnica (contexto de herramientas)
 
@@ -21,6 +22,6 @@ Repositorio kit de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`t
 
 ## Next steps
 
-1. Usuario: push a GitHub + tag `v0.1.0` (comandos en `docs/guides/setup-github.md`).
-2. Primer proyecto real: arrancar con tech-lead siguiendo el pipeline de `AGENTS.md`; tras validarlo, promover a `1.0.0`.
+1. Usuario: push a GitHub + tag `v0.2.1` (comandos en `docs/guides/setup-github.md`).
+2. Validar el pipeline completo (`PRD → specs → diseño → plan → implementación → QA → review → entrega`) en `web-opencode-dev-team`; tras validarlo, promover a `1.0.0`.
 3. Si algún proyecto externaliza docs: descomentar `references` en `opencode.jsonc`.

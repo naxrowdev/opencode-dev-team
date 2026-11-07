@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-06
+
+### Fixed
+
+- `kit/install.sh` refuses documentation-placeholder targets (`/ruta/...`, `/path/to/...`,
+  `/your/...`) with an explicit message **before** creating anything on disk. First
+  reported by a real usage case: pasting the README example verbatim made the installer
+  attempt `/ruta/a/mi-proyecto`, die on a raw `mkdir: Permission denied`, and never touch
+  the user's project.
+- `mkdir` failures are reported by the installer itself (`no se pudo crear el destino ...`)
+  instead of leaking the raw coreutils error.
+
+### Changed
+
+- The documented primary flow is now: `cd` to the project, `git clone` the kit **inside**
+  the project, and run `sh opencode-dev-team/kit/install.sh` from the project root (no
+  `cd` into the clone, no target argument). The installer detects a kit clone sitting
+  inside the target and prints a `rm -rf` cleanup hint when it finishes; a fresh guard
+  refuses to run from inside the clone itself (`el destino es el propio clon del kit`).
+  Cloning elsewhere + passing `TARGET_DIR` stays as the documented alternative.
+- README and the install guide now use a `PROYECTO=$HOME/...` variable with an explicit
+  replace-the-path note, a troubleshooting table (placeholder targets, mkdir failures,
+  foreign `.opencode/`), and a `git init` reminder for non-repo destinations.
+- `kit/selftest.sh` grows to 50 assertions (placeholder guard, friendly mkdir error,
+  the no-argument current-directory flow, and the clone-inside-the-project flow).
+
 ## [0.2.0] - 2026-11-06
 
 ### Added

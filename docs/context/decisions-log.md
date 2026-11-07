@@ -4,6 +4,14 @@ Cada entrada: fecha — decisión, no alternativas. 2-4 líneas: quién decide, 
 
 ---
 
+## 2026-11-06 — Flujo principal: `git clone` dentro del proyecto + install sin `cd`, not rutas copiadas ni `cd` externo
+
+Tech-lead con el usuario: se clona el kit *dentro* del proyecto y se corre `sh opencode-dev-team/kit/install.sh` desde la raíz (sin entrar al clon, sin `TARGET_DIR` — default `.`). El instalador detecta el clon dentro del target e imprime el hint de limpieza (`rm -rf <clon>`); guard nuevo corta si el destino es el propio clon (`kit/install.sh` presente). La variante clon-afuera + `TARGET_DIR` queda como alternativa documentada. Archivos: `kit/install.sh`, `kit/selftest.sh` (50 asserts), `README.md`, `docs/guides/installing-into-a-project.md`, `CHANGELOG.md`.
+
+## 2026-11-06 — Guard de placeholder targets en `install.sh` + error amable de mkdir, not `mkdir: Permission denied` crudo
+
+Tech-lead decide tras el primer caso real de uso: pegar el bloque del README verbatim (con `/ruta/a/mi-proyecto`) hacía que el instalador intentara crear `/ruta/a/mi-proyecto` y muriera con un error crudo de coreutils, sin tocar el proyecto destino. El guard corta ahora con mensaje claro y sugerencia de ruta real **antes** de crear nada en disco; la guía usa `PROYECTO=$HOME/...` como variable explícita. Archivos: `kit/install.sh`, `kit/selftest.sh` (39 asserts), `README.md`, `docs/guides/installing-into-a-project.md`, `VERSION`, `CHANGELOG.md`.
+
 ## 2026-11-06 — Kit inyectable con contexto vacío (`kit/install.sh`), not clonar el repo ni submodule
 
 Tech-lead con el usuario: el kit se instala en proyectos destino vía `kit/install.sh` (vendored — los archivos quedan commiteados en el proyecto), sembrando `docs/context/` vacío desde `kit/templates/` para que la memoria del kit nunca viaje. Config raíz create-if-absent con `*.kit-new`; upgrades con hash/3-way diff, submodule y `npx` quedaron fuera de 0.2.0. Archivos: `kit/`, `docs/guides/installing-into-a-project.md`, `README.md`, `docs/guides/setup-github.md`, `AGENTS.md`, `VERSION`, `CHANGELOG.md`.

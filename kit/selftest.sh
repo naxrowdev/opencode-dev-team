@@ -3,7 +3,12 @@
 #   1. a fresh install carries no kit-repository state and seeds empty context;
 #   2. re-running never touches docs/context/* (write-once);
 #   3. existing project config is preserved and offered as *.kit-new;
-#   4. the installer refuses to run against the kit repo or a foreign .opencode/.
+#   4. the installer refuses to run against the kit repo or a foreign .opencode/;
+#   5. pasted documentation-placeholder targets are refused with a clear message,
+#      and a mkdir failure explains itself instead of leaking a raw error;
+#   6. omitting TARGET_DIR installs into the current directory (the primary flow);
+#   7. a kit clone inside the project installs into the project root, prints a
+#      cleanup hint, and installing into the clone itself is refused.
 #
 # POSIX sh, no dependencies beyond the coreutils. Run from anywhere:
 #   kit/selftest.sh
@@ -34,6 +39,16 @@ run_install() {
   log=$1; shift
   if "$INSTALL" "$@" >"$log" 2>&1; then return 0; fi
   return 1
+}
+
+run_install_cwd() {
+  d=$1; log=$2; shift 2
+  (cd "$d" && "$INSTALL" "$@" >"$log" 2>&1)
+}
+
+run_install_local() {
+  d=$1; kitdir=$2; log=$3; shift 3
+  (cd "$d" && sh "$kitdir/kit/install.sh" "$@" >"$log" 2>&1)
 }
 
 printf 'selftest: opencode-dev-team kit\n\n'
@@ -113,6 +128,39 @@ mkdir -p "$C/.opencode/agents"
 printf 'name: mine\n' > "$C/.opencode/agents/mine.md"
 refute "refuses a foreign .opencode/ without --force" run_install "$WORK/guard-foreign.log" "$C"
 check "--force overrides the foreign .opencode/ guard" run_install "$WORK/guard-force.log" --force "$C"
+
+# ── 5. Documentation placeholder + mkdir failure messages ─────────────────────
+printf '\ndocumentation placeholder and mkdir failure\n'
+refute "rejects the guide placeholder path"            run_install "$WORK/guard-placeholder.log" /ruta/a/mi-proyecto
+check "placeholder error names the pasted path"       grep -q "/ruta/a/mi-proyecto" "$WORK/guard-placeholder.log"
+check "placeholder error tells the user what to do"   grep -q "placeholder de la documentación" "$WORK/guard-placeholder.log"
+
+F="$WORK/afile"
+printf 'x' > "$F"
+refute "refuses a target under a regular file"        run_install "$WORK/guard-mkdir.log" "$F/sub"
+check "mkdir failure explains itself"                 grep -q "no se pudo crear el destino" "$WORK/guard-mkdir.log"
+
+# ── 6. No-argument install targets the current directory ──────────────────────
+printf '\ninstall without TARGET_DIR\n'
+D="$WORK/noarg"
+mkdir -p "$D"
+check "no-arg dry-run works in cwd"                   run_install_cwd "$D" "$WORK/noarg-dry.log" --dry-run
+refute "no-arg dry-run wrote nothing"                 test -e "$D/AGENTS.md"
+check "no-arg real install runs in cwd"               run_install_cwd "$D" "$WORK/noarg.log"
+check "landed in the working directory"               test -f "$D/AGENTS.md"
+check "marker landed in the working directory"        test -f "$D/.opencode/kit.json"
+
+# ── 7. Kit cloned inside the target project (primary flow) ────────────────────
+printf '\nkit cloned inside the target\n'
+G="$WORK/kitclone"
+mkdir -p "$G"
+cp -R "$KIT_ROOT" "$G/opencode-dev-team"   # working tree, not HEAD: the tests exercise the new code
+check "clone ready (selfsetup)"                       test -f "$G/opencode-dev-team/kit/install.sh"
+check "install from the project root"                 run_install_local "$G" "opencode-dev-team" "$WORK/kitclone.log"
+check "kit files landed in the project root"          test -f "$G/AGENTS.md"
+check "cleanup hint printed"                          grep -q "rm -rf" "$WORK/kitclone.log"
+refute "installing into the clone itself refused"     run_install_local "$G" "opencode-dev-team" "$WORK/kitclone-guard.log" "$G/opencode-dev-team"
+check "kit-clone guard explains itself"               grep -q "clon del kit" "$WORK/kitclone-guard.log"
 
 # ── Report ────────────────────────────────────────────────────────────────────
 printf '\n%s\n' "─────────────────────────────"

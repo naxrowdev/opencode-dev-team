@@ -22,6 +22,7 @@ KIT_VERSION=$(tr -d '[:space:]' < "$KIT_ROOT/VERSION" 2>/dev/null || echo "unkno
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 TARGET="."
+TARGET_GIVEN=0
 DRY_RUN=0
 FORCE=0
 
@@ -29,7 +30,8 @@ usage() {
   cat <<'EOF'
 Usage: kit/install.sh [TARGET_DIR] [options]
 
-  TARGET_DIR   Project to install into (default: current directory).
+  TARGET_DIR   Project to install into. Omit it to install into the folder
+               you are in (recommended: cd into your project first).
   --dry-run    Print the plan, write nothing.
   --force      Overwrite a .opencode/ that was not installed by this kit.
   -h, --help   Show this help.
@@ -60,8 +62,8 @@ while [ $# -gt 0 ]; do
     -h|--help) usage; exit 0 ;;
     -*)        die "opción desconocida: $1 (ver --help)" ;;
     *)
-      case "$TARGET" in
-        ".") TARGET=$1 ;;
+      case "$TARGET_GIVEN" in
+        0) TARGET=$1; TARGET_GIVEN=1 ;;
         *)   die "solo se acepta un TARGET_DIR" ;;
       esac
       ;;
@@ -77,8 +79,19 @@ read_list() {
   sed -e 's/#.*//' -e 's/[[:space:]]*$//' -e '/^$/d' "$1"
 }
 
-# ── Resolve and guard the target ──────────────────────────────────────────────
-if [ "$DRY_RUN" -eq 0 ]; then mkdir -p "$TARGET"; fi
+# ── Guard the target ──────────────────────────────────────────────────────────
+# The guide's example blocks are copy-paste magnets: catch placeholder paths
+# verbatim, before anything is created on disk.
+case "$TARGET" in
+  /ruta|*/ruta/*|/path/to/*|/your/*)
+    die "el destino '$TARGET' parece un placeholder de la documentación — reemplazalo por la ruta real de tu proyecto (ej.: $HOME/Proyectos/mi-proyecto)"
+    ;;
+esac
+
+# ── Resolve the target ────────────────────────────────────────────────────────
+if [ "$DRY_RUN" -eq 0 ]; then
+  mkdir -p "$TARGET" 2>/dev/null || die "no se pudo crear el destino '$TARGET' (¿ruta válida? ¿permisos del directorio padre?)"
+fi
 
 if [ -d "$TARGET" ]; then
   TARGET=$(CDPATH= cd -- "$TARGET" && pwd)
@@ -92,6 +105,12 @@ else
   die "no se pudo asegurar el destino: $TARGET"
 fi
 
+# The primary flow keeps a clone of the kit inside the project — but only as a
+# vehicle: installing INTO the kit itself (repo or clone) would turn kit state
+# into the project's own state
+if [ -f "$TARGET/kit/install.sh" ]; then
+  die "el destino es el propio clon del kit (tiene kit/install.sh) — ejecutá el instalador desde la raíz de tu proyecto, sin entrar al clon"
+fi
 case "$TARGET/" in
   "$KIT_ROOT/"*) die "el destino está dentro del repo del kit ($KIT_ROOT) — elegí otro directorio" ;;
 esac
@@ -117,7 +136,11 @@ done
 # ── Install ───────────────────────────────────────────────────────────────────
 printf 'instalando opencode-dev-team %s\n' "$KIT_VERSION"
 printf '  kit:    %s\n' "$KIT_ROOT"
-printf '  destino: %s\n\n' "$TARGET"
+if [ "$TARGET_GIVEN" -eq 0 ]; then
+  printf '  destino: %s (directorio actual)\n\n' "$TARGET"
+else
+  printf '  destino: %s\n\n' "$TARGET"
+fi
 
 C_COPY=0
 C_SEED=0
@@ -227,6 +250,10 @@ EOF
 fi
 
 # ── Summary ───────────────────────────────────────────────────────────────────
+KIT_CLONE_REL=""
+case "$KIT_ROOT/" in
+  "$TARGET/"*) KIT_CLONE_REL=${KIT_ROOT#"$TARGET"/} ;;
+esac
 printf '\n%s\n' "resumen"
 printf '  instalado/actualizado: %s\n' "$C_COPY"
 printf '  contexto sembrado:     %s\n' "$C_SEED"
@@ -235,6 +262,11 @@ printf '  requiere tu revisión:  %s\n' "$C_CONFLICT"
 
 if [ "$C_CONFLICT" -gt 0 ]; then
   printf '\n  Diff de los archivos .kit-new y mergeá lo que te sirva.\n'
+fi
+
+# The clone of the kit inside the project is just the vehicle: disposable now
+if [ -n "$KIT_CLONE_REL" ]; then
+  printf '\n  el kit quedó clonado en %s; ya está inyectado — podés borrarlo:\n    rm -rf %s\n\n' "$KIT_CLONE_REL" "$KIT_CLONE_REL"
 fi
 
 cat <<EOF
