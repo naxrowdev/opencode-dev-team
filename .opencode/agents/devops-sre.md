@@ -3,12 +3,12 @@ description: "DevOps/SRE: CI/CD, Docker, GitHub Actions, observabilidad y SLOs. 
 mode: subagent
 color: "#64748B"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "infra/**", effect: "allow" }
   - { action: "edit", resource: ".github/**", effect: "allow" }
   - { action: "edit", resource: "Dockerfile*", effect: "allow" }
   - { action: "edit", resource: "docker-compose*.yml", effect: "allow" }
   - { action: "edit", resource: ".dockerignore", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "ask" }
   - { action: "shell", resource: "docker compose build *", effect: "ask" }
   - { action: "shell", resource: "docker compose up -d *", effect: "ask" }

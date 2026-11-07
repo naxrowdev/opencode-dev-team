@@ -3,10 +3,10 @@ description: "QA Engineer: plan de pruebas, tests unitarios, de integración y e
 mode: subagent
 color: "#84CC16"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "tests/**", effect: "allow" }
   - { action: "edit", resource: "e2e/**", effect: "allow" }
   - { action: "edit", resource: "playwright.config.ts", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "ask" }
   - { action: "shell", resource: "npm run test *", effect: "allow" }
   - { action: "shell", resource: "npx playwright test *", effect: "ask" }

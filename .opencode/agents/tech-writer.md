@@ -3,10 +3,10 @@ description: "Technical Writer: README, guías, CHANGELOG desde el diff, ADRs y 
 mode: subagent
 color: "#D946EF"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "docs/**", effect: "allow" }
   - { action: "edit", resource: "README.md", effect: "allow" }
   - { action: "edit", resource: "CHANGELOG.md", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "deny" }
   - { action: "shell", resource: "git status *", effect: "allow" }
   - { action: "shell", resource: "git diff *", effect: "allow" }

@@ -3,8 +3,8 @@ description: "Business Analyst: traduce PRDs y necesidades en requisitos, histor
 mode: subagent
 color: "#EAB308"
 permissions:
-  - { action: "edit", resource: "docs/specs/**", effect: "allow" }
   - { action: "edit", resource: "*", effect: "deny" }
+  - { action: "edit", resource: "docs/specs/**", effect: "allow" }
   - { action: "shell", resource: "*", effect: "deny" }
   - { action: "shell", resource: "git status *", effect: "allow" }
   - { action: "shell", resource: "git diff *", effect: "allow" }

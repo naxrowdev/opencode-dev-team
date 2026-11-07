@@ -3,8 +3,8 @@ description: "Dise√±ador UX/UI: flujos de pantalla, criterios visuales, auditor√
 mode: subagent
 color: "#EC4899"
 permissions:
-  - { action: "edit", resource: "docs/design/**", effect: "allow" }
   - { action: "edit", resource: "*", effect: "deny" }
+  - { action: "edit", resource: "docs/design/**", effect: "allow" }
   - { action: "shell", resource: "*", effect: "deny" }
   - { action: "shell", resource: "git status *", effect: "allow" }
   - { action: "shell", resource: "git diff *", effect: "allow" }

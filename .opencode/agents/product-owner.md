@@ -3,8 +3,8 @@ description: "Product Owner: define el problema, escribe el PRD y prioriza el ba
 mode: subagent
 color: "#F97316"
 permissions:
-  - { action: "edit", resource: "docs/product/**", effect: "allow" }
   - { action: "edit", resource: "*", effect: "deny" }
+  - { action: "edit", resource: "docs/product/**", effect: "allow" }
   - { action: "shell", resource: "*", effect: "deny" }
   - { action: "shell", resource: "git status *", effect: "allow" }
   - { action: "shell", resource: "git diff *", effect: "allow" }

@@ -3,11 +3,11 @@ description: "Backend dev: Hono + Drizzle + Better Auth + PostgreSQL. Implementa
 mode: subagent
 color: "#10B981"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "src/**", effect: "allow" }
   - { action: "edit", resource: "tests/**", effect: "allow" }
   - { action: "edit", resource: "drizzle/**", effect: "allow" }
   - { action: "edit", resource: ".env.example", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "ask" }
   - { action: "shell", resource: "npm run test *", effect: "allow" }
   - { action: "shell", resource: "npm run typecheck", effect: "allow" }

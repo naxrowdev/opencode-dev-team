@@ -3,10 +3,10 @@ description: "Arquitecto de software: límites de módulos, contratos API (Hono/
 mode: subagent
 color: "#3B82F6"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "docs/adr/**", effect: "allow" }
   - { action: "edit", resource: "docs/specs/**", effect: "allow" }
   - { action: "edit", resource: "GLOSSARY.md", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "deny" }
   - { action: "shell", resource: "git status *", effect: "allow" }
   - { action: "shell", resource: "git diff *", effect: "allow" }

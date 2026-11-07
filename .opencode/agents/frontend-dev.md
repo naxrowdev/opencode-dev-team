@@ -3,9 +3,9 @@ description: "Frontend dev: React SPA (Vite) + TanStack Query + RHF + Zustand + 
 mode: subagent
 color: "#06B6D4"
 permissions:
+  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "edit", resource: "src/**", effect: "allow" }
   - { action: "edit", resource: "tests/**", effect: "allow" }
-  - { action: "edit", resource: "*", effect: "deny" }
   - { action: "shell", resource: "*", effect: "ask" }
   - { action: "shell", resource: "npm run test *", effect: "allow" }
   - { action: "shell", resource: "npm run dev *", effect: "allow" }
