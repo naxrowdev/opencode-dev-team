@@ -1,5 +1,5 @@
 # Project State
-_Updated: 2026-11-06 · Version: 0.2.1 · by: tech-lead_
+_Updated: 2026-11-07 · Version: 0.2.1 · by: tech-lead_
 
 ## What this is right now
 
@@ -7,10 +7,12 @@ Repositorio kit de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`t
 
 ## Current state
 
-- Built: v0.2.1 — el instalador valida el target ANTES de crear nada en disco: guard de paths placeholder pegados desde la documentación (`/ruta/...`, `/path/to/...`, `/your/...`), error amable de `mkdir`, y flujo principal = `git clone` del kit **dentro del proyecto** + `sh opencode-dev-team/kit/install.sh` desde la raíz (sin `cd` al clon, sin argumentos) con hint de limpieza (`rm -rf opencode-dev-team`) y guard que corta si el destino ES el clon. Origen: primer caso real de uso (bloque del README pegado verbatim → `mkdir: Permission denied` y proyecto destino vacío). Selftest 50/50 en verde.
-- First real project: `~/Proyectos/web-opencode-dev-team` instalado con éxito (12 agentes, 55 skills, `docs/context/` sembrado vacío); el pipeline completo aún no se validó ahí.
+- Built: v0.2.1 — el instalador valida el target ANTES de crear nada en disco: guard de paths placeholder pegados desde la documentación (`/ruta/...`, `/path/to/...`, `/your/...`), error amable de `mkdir`, y flujo principal = `git clone` del kit **dentro del proyecto** + `sh opencode-dev-team/kit/install.sh` desde la raíz (sin `cd` al clon, sin argumentos) con hint de limpieza (`rm -rf opencode-dev-team`) y guard que corta si el destino ES el clon. Origen: primer caso real de uso (bloque del README pegado verbatim → `mkdir: Permission denied` y proyecto destino vacío). Selftest 51/51 en verde.
+- First real project: `~/Proyectos/web-opencode-dev-team` — el estado anterior ("instalado con éxito") era **falso**: la carpeta no existía. Instalado de cero el 2026-11-07 (12 agentes, 55 skills, `docs/context/` sembrado vacío) y ahí se construyó la web de presentación del kit con el pipeline del equipo: PRD → diseño+copy → plan → implementación → review → docs. Etapas omitidas por diseño (la landing no tiene API ni persistencia): business-analyst, architect de API y backend-dev. Quedan pendientes los criterios de usabilidad con personas.
+- Bug corregido (2026-11-07, sin publicar): el orden de las reglas de permisos en los archivos de agente anulaba la escritura de todos los subagentes (`edit *: deny` después de los `allow` por carpeta; gana la última regla que coincide).
+- Idioma del kit (2026-11-07, sin publicar): la prosa (12 prompts de agente, `README.md`, `AGENTS.md`, guía de instalación y mensajes del instalador/selftest) pasa a español neutro, sin voseo — ADR `docs/adr/0001-use-neutral-spanish-in-kit-documentation.md`. `kit/selftest.sh` asserta que la prosa instalada no tenga voseo. Las 55 skills vendorizadas siguen en inglés (sin cambios).
 - In progress: nada.
-- Blocked / waiting user: push 0.2.1 + tag `v0.2.1` (`docs/guides/setup-github.md`); LICENSE pendiente de elección.
+- Blocked / waiting user: push 0.2.1 + tag `v0.2.1` (`docs/guides/setup-github.md`); LICENSE pendiente de elección; publicar la corrección de permisos (v0.2.2) y el cambio de idioma neutro cuando el usuario defina el remoto y la versión (versionado diferido por decisión del usuario).
 - En revisión del tech-lead: upgrades con hash/3-way diff, submodule y `npx` siguen como candidato para 0.3.
 
 ## Nota técnica (contexto de herramientas)
@@ -23,5 +25,6 @@ Repositorio kit de un equipo de desarrollo agéntico OpenCode: 1 orquestador (`t
 ## Next steps
 
 1. Usuario: push a GitHub + tag `v0.2.1` (comandos en `docs/guides/setup-github.md`).
-2. Validar el pipeline completo (`PRD → specs → diseño → plan → implementación → QA → review → entrega`) en `web-opencode-dev-team`; tras validarlo, promover a `1.0.0`.
-3. Si algún proyecto externaliza docs: descomentar `references` en `opencode.jsonc`.
+2. Validar el pipeline completo (`PRD → specs → diseño → plan → implementación → QA → review → entrega`) en `web-opencode-dev-team`: la cadena PRD → diseño → plan → implementación → review → docs ya se ejecutó (2026-11-07); faltan business-analyst y architect de API, que no aplican a una landing sin backend. La promoción a `1.0.0` sigue condicionada a esa validación.
+3. Publicar la corrección de permisos de agentes (v0.2.2) cuando el usuario defina el remoto.
+4. Si algún proyecto externaliza docs: descomentar `references` en `opencode.jsonc`.

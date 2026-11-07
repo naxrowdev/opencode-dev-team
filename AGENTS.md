@@ -22,7 +22,7 @@ Este proyecto se desarrolla con un **equipo de software agéntico** en OpenCode:
 
 **Prohibido** salvo ADR aprobado por el usuario: Next.js/Remix, NestJS/Fastify/u otro framework backend, Prisma/TypeORM/Mongoose, Auth.js/Clerk/Supabase Auth, Redux/RTK Query/SWR/Jotai, MUI/AntD/Chakra, CSS-in-JS, cualquier DB que no sea PostgreSQL.
 
-Regla para APIs de librerías: **nunca inventar firmas de memoria**. Si una skill no responde tu duda, consultá Context7 (skill `context7-query`).
+Regla para APIs de librerías: **nunca inventar firmas de memoria**. Si una skill no responde tu duda, consulta Context7 (skill `context7-query`).
 
 ## El equipo
 
@@ -41,7 +41,7 @@ Regla para APIs de librerías: **nunca inventar firmas de memoria**. Si una skil
 | `devops-sre` | ⬜ `#64748B` | subagent | CI/CD, Docker, observabilidad, SRE | Entrega/Operación |
 | `tech-writer` | 💜 `#D946EF` | subagent | README, guías, changelog, docs | Transversal |
 
-El color se define en el frontmatter `color:` de cada archivo en `.opencode/agents/`. Para cambiarlo, editá el hex y reiniciá la sesión.
+El color se define en el frontmatter `color:` de cada archivo en `.opencode/agents/`. Para cambiarlo, edita el hex y reinicia la sesión.
 
 ## Flujo de trabajo estándar (pipeline)
 
@@ -61,14 +61,14 @@ Tareas pequeñas (bug puntual, ajuste estilístico) no necesitan todo el pipelin
 
 ## Reglas de colaboración
 
-- **Subagentes empiezan con contexto limpio.** La delegación incluye: objetivo, archivos/módulos relevantes, criterios de aceptación o ticket de origen, y restricciones del stack. Nada de “mirá el proyecto y hacé algo”.
+- **Subagentes empiezan con contexto limpio.** La delegación incluye: objetivo, archivos/módulos relevantes, criterios de aceptación o ticket de origen, y restricciones del stack. Nada de “mira el proyecto y haz algo”.
 - **Evidencia antes de declarar “listo”.** Nada se marca como terminado sin correr los comandos de verificación (skill `verification-before-completion`). Los claims de éxito van acompañados del output real.
 - **Estado guardado antes de cerrar fase.** Al terminar cada tarea o fase, el tech-lead actualiza `docs/context/STATE.md` y `docs/context/decisions-log.md` (skill `context-persistence`): la memoria entre sesiones es el repo, no un plugin.
-- **Contexto de la sesión anterior, siempre.** `docs/context/STATE.md` se inyecta automáticamente como instrucción ambient (config `instructions` en `opencode.jsonc`): todo agente parte de ahí. Pero es una **afirmación a verificar**: contrastala con el repo antes de planificar; si hay drift, el tech-lead actualiza `STATE.md` antes de seguir.
-- **Aprobación de usuario para**: push, merge, deploy, migraciones destructivas, secretos reales. El equipo prepara todo; el usuario ejecuta lo irreversible.
+- **Contexto de la sesión anterior, siempre.** `docs/context/STATE.md` se inyecta automáticamente como instrucción ambient (config `instructions` en `opencode.jsonc`): todo agente parte de ahí. Pero es una **afirmación a verificar**: contrástala con el repo antes de planificar; si hay drift, el tech-lead actualiza `STATE.md` antes de seguir.
+- **Aprobación de usuario para**: push, merge, despliegue, migraciones destructivas, secretos reales. El equipo prepara todo; el usuario ejecuta lo irreversible.
 - **`.env` nunca se edita ni se commit-tea**; se agrega la variable en `.env.example` con valor placeholder.
 - **Migraciones Drizzle**: las genera el backend-dev, pero se aplican solo con aprobación explícita del usuario; nunca `drizzle-kit push` contra datos sin confirmar.
-- **Idioma**: documentación de producto (PRD, specs, UX) en español; código, comentarios, nombres de identificadores, commits y ADRs en inglés.
+- **Idioma**: documentación de producto (PRD, specs, UX) en **español neutro** (sin voseo: “tú” e imperativo estándar); código, comentarios, nombres de identificadores, commits y ADRs en inglés.
 
 ## Memoria entre sesiones, minimalismo y tokens (nativo, sin plugins)
 

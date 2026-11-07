@@ -94,6 +94,11 @@ for p in $(sed -n 's/.*"instructions"[[:space:]]*:[[:space:]]*\[\([^]]*\)\].*/\1
   check "instructions path resolves: $p"        test -e "$A/$p"
 done
 
+# Spanish neutrality: the prose that travels must not use voseo
+VOSEO_RE='\b(Sos|vos|escribís|tenés|podés|hacés|querés|sabés|elegís|decís|venís|usás|tocás|mirás|pedís|buscás|leés|creés|decidés|seguís|consultás|evaluás|reportás|analizás|diseñás|priorizás|implementás|ejecutás|revisás|validás|configurás|definís|agregás|documentás|conectás|escribí|ejecutá|revisá|validá|aplicá|usá|configurá|definí|agregá|implementá|creá|generá|publicá|instalá|cargá|guardá|buscá|hacé|pedí|leé|corrí|documentá|diseñá|derivá|incluí|basá|editá|mergeá|analizá|reportá|devolvé|actualizá|versioná|priorizá|justificá|escuchá|clarificá|confirmá|decidí|partí|nombrá|entregá|dejá|esperá|ignorá|evità|consultá|rechazá|re-instalá|reiniciá|verificá|elegí|seguí|volvé|borrá|partila|cruzalo|parate|reemplazalo|inicialo|contrastalo|contrastala|castellano)\b'
+refute "no voseo in the installed prose" \
+  grep -rEl "$VOSEO_RE" "$A/.opencode/agents/" "$A/docs/" "$A/AGENTS.md" "$A/opencode.jsonc"
+
 # ── 2. Re-run: context is write-once ──────────────────────────────────────────
 printf '\n%s\n' 're-run and context immutability'
 printf '\n<!-- sentinel: project-owned -->\n' >> "$A/docs/context/STATE.md"

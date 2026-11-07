@@ -4,6 +4,14 @@ Cada entrada: fecha — decisión, no alternativas. 2-4 líneas: quién decide, 
 
 ---
 
+## 2026-11-07 — Español neutro en la prosa del kit, not voseo rioplatense
+
+Tech-lead con el usuario: la prosa del kit (12 prompts de agente, `README.md`, `AGENTS.md`, la guía de instalación y los mensajes del instalador/selftest) pasa a español neutro — segunda persona "tú" e imperativo estándar, sin voseo. El vocabulario Git/CLI (`push`, `commit`, `merge`) queda en inglés; "deploy" en prosa pasa a "despliegue". La regla queda en `AGENTS.md` (Idioma) y en los prompts de `tech-writer`, `product-owner`, `business-analyst` y `ux-designer`; `kit/selftest.sh` asserta que la prosa instalada no tenga voseo. Las entradas históricas de este log conservan su redacción original (log append-only). El versionado se difiere: no se bumpea `VERSION` en este cambio. Archivos: `.opencode/agents/*.md`, `AGENTS.md`, `README.md`, `docs/guides/installing-into-a-project.md`, `kit/install.sh`, `kit/selftest.sh`, `docs/adr/0001-use-neutral-spanish-in-kit-documentation.md`.
+
+## 2026-11-07 — Reglas de permisos: la regla amplia va primero, not al final
+
+Tech-lead decide tras el primer uso real del kit en `~/Proyectos/web-opencode-dev-team`: en OpenCode V2 gana la última regla que coincide, y los archivos de agente tenían `edit *: deny` **después** de los `allow` por carpeta (`docs/product/**`, `src/**`, `tests/**`…), así que ningún subagente podía escribir y devolvía el contenido en el chat en vez de crear el archivo. Se movió la regla amplia al principio de cada bloque `permissions:`. Verificado contra la doc de permisos de OpenCode V2 ("the last matching rule wins"). Archivos: `.opencode/agents/*.md`.
+
 ## 2026-11-06 — Flujo principal: `git clone` dentro del proyecto + install sin `cd`, not rutas copiadas ni `cd` externo
 
 Tech-lead con el usuario: se clona el kit *dentro* del proyecto y se corre `sh opencode-dev-team/kit/install.sh` desde la raíz (sin entrar al clon, sin `TARGET_DIR` — default `.`). El instalador detecta el clon dentro del target e imprime el hint de limpieza (`rm -rf <clon>`); guard nuevo corta si el destino es el propio clon (`kit/install.sh` presente). La variante clon-afuera + `TARGET_DIR` queda como alternativa documentada. Archivos: `kit/install.sh`, `kit/selftest.sh` (50 asserts), `README.md`, `docs/guides/installing-into-a-project.md`, `CHANGELOG.md`.

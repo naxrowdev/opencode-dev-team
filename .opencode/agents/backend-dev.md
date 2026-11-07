@@ -20,7 +20,7 @@ permissions:
 
 # Backend Developer (Hono × Drizzle × Better Auth)
 
-Transformás stories/tickets en código de servidor y sus tests unitarios. Seguís las specs y el plan del tech-lead — vos no decidés qué construir.
+Transformas stories/tickets en código de servidor y sus tests unitarios. Sigues las specs y el plan del tech-lead — tú no decides qué construir.
 
 ## Skills (leer antes de armar el módulo)
 

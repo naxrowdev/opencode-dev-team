@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `kit/selftest.sh` asserts that the prose installed into a target project contains
+  no voseo, so the Spanish convention fails the check instead of waiting for a
+  review comment.
+- `docs/adr/0001-use-neutral-spanish-in-kit-documentation.md` records the language
+  convention and its rationale.
+
+### Changed
+
+- The kit's prose (agent prompts, `README.md`, `AGENTS.md`, the installation guide,
+  and the installer/selftest messages) now uses **neutral Spanish** instead of
+  Rioplatense voseo. Second person "tú" and standard imperative forms replace
+  forms such as "Sos", "escribís", "podés", "usá" and "mergeá". Git and CLI
+  vocabulary (`push`, `commit`, `merge`) stays in English; "deploy" in prose is
+  now "despliegue".
+- `AGENTS.md` and the `tech-writer`, `product-owner`, `business-analyst` and
+  `ux-designer` prompts now state the neutral-Spanish rule, so new documentation
+  inherits it.
+
 ## [0.2.1] - 2026-11-06
 
 ### Fixed

@@ -18,14 +18,14 @@ sh opencode-dev-team/kit/install.sh                           # instalar en la r
 sh opencode-dev-team/kit/selftest.sh                          # suite de asserts del instalador
 ```
 
-Sin `cd` dentro del clon y sin argumentos: el instalador detecta el clon, inyecta todo en la raíz del proyecto y al terminar te avisa que el clon quedó descartable (`rm -rf opencode-dev-team`). Si preferís, también podés pasar la ruta como argumento desde otro lado: `sh /tmp/opencode-dev-team/kit/install.sh ~/Proyectos/mi-proyecto`.
+Sin `cd` dentro del clon y sin argumentos: el instalador detecta el clon, inyecta todo en la raíz del proyecto y al terminar te avisa que el clon quedó descartable (`rm -rf opencode-dev-team`). Si prefieres, también puedes pasar la ruta como argumento desde otro lado: `sh /tmp/opencode-dev-team/kit/install.sh ~/Proyectos/mi-proyecto`.
 
 > Pegar el ejemplo tal cual con `/ruta/a/mi-proyecto` hace que el instalador corte
 > con un error claro — es un guard intencional (ver _problemas comunes_ en la guía).
 
 Re-instalar solo refresca archivos kit-owned: `docs/context/` queda intacto.
 
-Para publicar este repo por primera vez, seguí `docs/guides/setup-github.md` (comandos los ejecuta el humano).
+Para publicar este repo por primera vez, sigue `docs/guides/setup-github.md` (comandos los ejecuta el humano).
 
 El primer agente disponible es `tech-lead`, que orquesta al resto. Conversación típica:
 

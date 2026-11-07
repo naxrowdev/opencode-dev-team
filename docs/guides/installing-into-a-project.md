@@ -1,6 +1,6 @@
 # Instalar el equipo en otro proyecto
 
-El kit se **inyecta** en un proyecto existente: lo clonás como carpeta temporal *dentro*
+El kit se **inyecta** en un proyecto existente: lo clonas como carpeta temporal *dentro*
 de tu proyecto, y el instalador copia a la raíz solo los archivos del equipo y siembra un
 `docs/context/` **vacío**. Todo se corre desde la raíz del proyecto, sin `cd` dentro del
 clon; el clon queda descartable en cuanto el instalador termina, y la memoria del kit
@@ -14,7 +14,7 @@ clon; el clon queda descartable en cuanto el instalador termina, y la memoria de
 ## 1. Clonar el kit (desde tu proyecto)
 
 ```bash
-cd ~/Proyectos/mi-proyecto                                # parate en TU proyecto
+cd ~/Proyectos/mi-proyecto                                # párate en TU proyecto
 git clone git@github.com:naxrowdev/opencode-dev-team.git  # crea ./opencode-dev-team
 ```
 
@@ -46,16 +46,16 @@ El destino puede no existir aún: el instalador crea el directorio con `mkdir -p
 
 | Mensaje | Causa | Qué hacer |
 |---|---|---|
-| `parece un placeholder de la documentación` | pegaste el ejemplo con `/ruta/a/mi-proyecto` en lugar de tu ruta real | usá la ruta real (ej.: `$HOME/Proyectos/mi-proyecto`) |
-| `el destino está dentro del repo del kit` | estás ejecutando el instalador desde la carpeta del kit (`cd` al proyecto primero) | `cd ~/Proyectos/mi-proyecto` y volvé a correr el comando |
-| `el destino es el propio clon del kit` | quedaste parado dentro de la carpeta del clon (`opencode-dev-team/`) | volvé a la raíz de tu proyecto (`cd ..`) y correr el comando ahí, sin entrar al clon |
-| `no se pudo crear el destino ...` | falló `mkdir -p`: la ruta no es creable (directorios padre sin permiso, o el padre es un archivo) | usá una ruta bajo un directorio donde tengas permisos |
-| `ya existe .opencode/ y no lo instaló este kit` | hay config previa de otra fuente | revisá qué hay en `.opencode/` y usá `--force` si corresponde (mirá el diff antes) |
+| `parece un placeholder de la documentación` | pegaste el ejemplo con `/ruta/a/mi-proyecto` en lugar de tu ruta real | usa la ruta real (ej.: `$HOME/Proyectos/mi-proyecto`) |
+| `el destino está dentro del repo del kit` | estás ejecutando el instalador desde la carpeta del kit (`cd` al proyecto primero) | `cd ~/Proyectos/mi-proyecto` y vuelve a correr el comando |
+| `el destino es el propio clon del kit` | quedaste parado dentro de la carpeta del clon (`opencode-dev-team/`) | vuelve a la raíz de tu proyecto (`cd ..`) y correr el comando ahí, sin entrar al clon |
+| `no se pudo crear el destino ...` | falló `mkdir -p`: la ruta no es creable (directorios padre sin permiso, o el padre es un archivo) | usa una ruta bajo un directorio donde tengas permisos |
+| `ya existe .opencode/ y no lo instaló este kit` | hay config previa de otra fuente | revisa qué hay en `.opencode/` y usa `--force` si corresponde (mira el diff antes) |
 
-Si el destino aún no es un repo git, inicialo antes del `git add` sugerido: `git init`.
+Si el destino aún no es un repo git, iniciala antes del `git add` sugerido: `git init`.
 
 Si el destino ya tiene `.opencode/` de otra fuente, el instalador se niega;
-podés forzarlo con `--force` (mira el diff antes).
+puedes forzarlo con `--force` (mira el diff antes).
 
 ## 3. Verificar
 
@@ -78,12 +78,12 @@ opencode                                   # arranca con tech-lead
 | **Nunca viaja** | `kit/`, `README.md`, `CHANGELOG.md`, `VERSION`, `docs/guides/setup-github.md`, y el `STATE.md`/`decisions-log.md` del kit | excluidos |
 
 El instalador nunca ejecuta `git`; imprime el `git add` sugerido y el push lo
-hacés vos.
+haces tú.
 
 ## Conflicto: archivos `.kit-new`
 
 Si tu proyecto ya tenía `AGENTS.md` y el kit instaló una versión más nueva,
-vas a encontrar `AGENTS.md.kit-new`. Mergeá a mano lo que quieras y borrá el
+vas a encontrar `AGENTS.md.kit-new`. Fusiona a mano lo que quieras y borra el
 `.kit-new`. Las reglas del proyecto (tu stack, tu equipo) viven en tu
 `AGENTS.md`, no en el `.kit-new`.
 
@@ -95,7 +95,7 @@ escribe el `kit.json` nuevo. `docs/context/` queda exactamente como lo dejó tu
 tech-lead: es memoria del proyecto.
 
 El marcador `.opencode/kit.json` marca qué configuración pertenece al kit. Si
-instalaste `.opencode/` a mano antes de 0.2.0, re-instalá una vez con `--force`
+instalaste `.opencode/` a mano antes de 0.2.0, vuelve a instalar una vez con `--force`
 y después el guard funciona solo.
 
 ## Uso en CI (opcional)

@@ -84,7 +84,7 @@ read_list() {
 # verbatim, before anything is created on disk.
 case "$TARGET" in
   /ruta|*/ruta/*|/path/to/*|/your/*)
-    die "el destino '$TARGET' parece un placeholder de la documentación — reemplazalo por la ruta real de tu proyecto (ej.: $HOME/Proyectos/mi-proyecto)"
+    die "el destino '$TARGET' parece un placeholder de la documentación — reemplázalo por la ruta real de tu proyecto (ej.: $HOME/Proyectos/mi-proyecto)"
     ;;
 esac
 
@@ -109,17 +109,17 @@ fi
 # vehicle: installing INTO the kit itself (repo or clone) would turn kit state
 # into the project's own state
 if [ -f "$TARGET/kit/install.sh" ]; then
-  die "el destino es el propio clon del kit (tiene kit/install.sh) — ejecutá el instalador desde la raíz de tu proyecto, sin entrar al clon"
+  die "el destino es el propio clon del kit (tiene kit/install.sh) — ejecuta el instalador desde la raíz de tu proyecto, sin entrar al clon"
 fi
 case "$TARGET/" in
-  "$KIT_ROOT/"*) die "el destino está dentro del repo del kit ($KIT_ROOT) — elegí otro directorio" ;;
+  "$KIT_ROOT/"*) die "el destino está dentro del repo del kit ($KIT_ROOT) — elige otro directorio" ;;
 esac
 case "$TARGET" in
   */.git|*/.git/*) die "el destino apunta a un directorio .git" ;;
 esac
 
 if [ "$DRY_RUN" -eq 0 ] && [ -d "$TARGET/.opencode" ] && [ ! -f "$TARGET/.opencode/kit.json" ] && [ "$FORCE" -eq 0 ]; then
-  die "ya existe .opencode/ y no lo instaló este kit; usá --force para sobrescribirlo"
+  die "ya existe .opencode/ y no lo instaló este kit; usa --force para sobrescribirlo"
 fi
 
 # ── Validation: nothing excluded may be included ──────────────────────────────
@@ -186,7 +186,7 @@ install_if_absent() {
       log "skip    $rel (idéntico al del kit)"
       C_SKIP=$((C_SKIP + 1))
     else
-      log "conflict $rel → $rel.kit-new (ya existía; mergeá a mano)"
+      log "conflict $rel → $rel.kit-new (ya existía; fusiona a mano)"
       C_CONFLICT=$((C_CONFLICT + 1))
       [ "$DRY_RUN" -eq 1 ] || cp "$src" "$TARGET/$rel.kit-new"
     fi
@@ -261,12 +261,12 @@ printf '  intacto/salteado:      %s\n' "$C_SKIP"
 printf '  requiere tu revisión:  %s\n' "$C_CONFLICT"
 
 if [ "$C_CONFLICT" -gt 0 ]; then
-  printf '\n  Diff de los archivos .kit-new y mergeá lo que te sirva.\n'
+  printf '\n  Diff de los archivos .kit-new y fusiona lo que te sirva.\n'
 fi
 
 # The clone of the kit inside the project is just the vehicle: disposable now
 if [ -n "$KIT_CLONE_REL" ]; then
-  printf '\n  el kit quedó clonado en %s; ya está inyectado — podés borrarlo:\n    rm -rf %s\n\n' "$KIT_CLONE_REL" "$KIT_CLONE_REL"
+  printf '\n  el kit quedó clonado en %s; ya está inyectado — puedes borrarlo:\n    rm -rf %s\n\n' "$KIT_CLONE_REL" "$KIT_CLONE_REL"
 fi
 
 cat <<EOF
@@ -276,5 +276,5 @@ próximos pasos
   git add .opencode AGENTS.md opencode.jsonc docs .gitignore .env.example
   opencode
 
-El primer agente es tech-lead. Revisá docs/context/STATE.md: arranca vacío a propósito.
+El primer agente es tech-lead. Revisa docs/context/STATE.md: arranca vacío a propósito.
 EOF
