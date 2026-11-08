@@ -6,7 +6,7 @@
 #
 # Curl mode (no clone: this file fetches a kit release tarball and runs it):
 #   curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
-#   curl -fsSL <misma-url> | sh -s -- --ref v0.3.0 --dry-run
+#   curl -fsSL <misma-url> | sh -s -- --ref v1.0.0 --dry-run
 #
 # Copies the kit-owned files (.opencode/agents, .opencode/skills, docs READMEs),
 # seeds an EMPTY project context from kit/templates/, and never carries over the

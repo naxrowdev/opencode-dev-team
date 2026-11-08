@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-07
+
 ### Added
 
 - `kit/uninstall.sh` removes the kit from a project safely: it reads the install manifest
@@ -78,6 +80,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AGENTS.md` and the `tech-writer`, `product-owner`, `business-analyst` and
   `ux-designer` prompts now state the neutral-Spanish rule, so new documentation
   inherits it.
+
+_[1.0.0]: primera versión estable del kit. Queda pendiente validar el one-liner de curl
+contra una GitHub Release publicada (hoy se prueba con tarballs locales)._
 
 ## [0.2.1] - 2026-11-06
 

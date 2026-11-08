@@ -1,6 +1,6 @@
 # Agentic Dev Team — Equipo de desarrollo con agentes (OpenCode)
 
-**Repo:** `naxrowdev/opencode-dev-team` · **Versión:** `0.2.1` (2026-11-06) — se promueve a `1.0.0` tras validar el equipo en un proyecto real. Ver `CHANGELOG.md` y `VERSION`.
+**Repo:** `naxrowdev/opencode-dev-team` · **Versión:** `1.0.0` (2026-11-07) — primera versión estable. Ver `CHANGELOG.md` y `VERSION`.
 
 Configuración de proyecto para OpenCode V2 que arma un **equipo completo de desarrollo de software agéntico**: 1 agente primario orquestador (`tech-lead`) + 11 subagentes especializados por rol, con 55 skills curated y vendorizadas en el repo (sin symlinks ni telemetría) y Context7 MCP para documentación vigente. Sin plugins externos: memoria entre sesiones, minimalismo de código y ahorro de tokens se logran con mecanismos nativos (ver abajo).
 
@@ -16,7 +16,7 @@ curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/ki
 curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
 
 # versión fijada (tag publicado)
-curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v0.3.0
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v1.0.0
 ```
 
 El script detecta que corre sin el árbol del kit, baja el tarball de la release a un directorio temporal, instala desde ahí y lo limpia. Requiere `curl` + `tar`; el checksum del tarball es opcional (`--sha256`).

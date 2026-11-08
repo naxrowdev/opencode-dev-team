@@ -12,27 +12,24 @@ Comandos para la primera subida (LOS EJECUTA EL USUARIO — el equipo no corre g
 
   Topics: `opencode` · `ai-agents` · `agents` · `llm` · `agentic` · `devtools` · `prompt-engineering` · `typescript`
 
-## 1. Inicializar y primer commit
+## 1. Subir el repositorio
+
+El repo ya está inicializado y con commits; solo falta el push.
 
 ```bash
-cd agentic
-git init -b main
-git add .
-git status   # revisar que solo suba lo esperado: .opencode/, docs/, AGENTS.md, README.md, CHANGELOG.md, VERSION, opencode.jsonc, .env.example, .gitignore, *.md raíz
-git commit -m "feat(config): agentic dev team v0.1.0 — 12 agentes, 55 skills, context7 mcp, permisos por rol"
+cd ~/Proyectos/opencode-dev-team
+git status          # working tree limpio
+git push -u origin main
 ```
 
 > `.env` está en `.gitignore`: aunque exista localmente, no entra al commit. Verifica con `git status` que no aparezca.
 
-## 2. Conectar y subir
+## 2. Crear y subir el tag
 
 ```bash
-git remote add origin git@github.com:naxrowdev/opencode-dev-team.git
-git push -u origin main
-
-# Tag de release: la skill docs-updater usa el último tag como base del diff para el próximo CHANGELOG
-git tag -a v0.1.0 -m "Agentic dev team 0.1.0 — pre-release"
-git push origin v0.1.0
+# el tag toma el nombre de VERSION con prefijo v (1.0.0 → v1.0.0)
+git tag -a v1.0.0 -m "opencode-dev-team 1.0.0"
+git push origin v1.0.0
 ```
 
 ## 3. Publicar la Release del tag
@@ -41,12 +38,12 @@ El instalador en modo curl resuelve **la última GitHub Release** vía
 `https://github.com/<repo>/releases/latest`. Un tag sin release no alcanza: el redirect no
 existe y el one-liner corta pidiendo `--ref`.
 
-Desde la web: **Releases → Draft a new release →** elegir el tag `v0.3.0` → publicar.
+Desde la web: **Releases → Draft a new release →** elegir el tag `v1.0.0` → publicar.
 
 O con GitHub CLI:
 
 ```bash
-gh release create v0.3.0 --title "v0.3.0" --notes-file CHANGELOG.md
+gh release create v1.0.0 --title "v1.0.0" --notes-file CHANGELOG.md
 ```
 
 Repite tag + release en cada versión publicada.
@@ -61,7 +58,7 @@ cd ~/Proyectos/mi-proyecto
 # última estable
 curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
 # versión fijada
-curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v0.3.0
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v1.0.0
 ```
 
 Alternativa sin curl (clonar y ejecutar el instalador local):

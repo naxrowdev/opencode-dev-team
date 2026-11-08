@@ -33,7 +33,7 @@ Piped use:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/<owner>/<repo>/main/kit/install.sh | sh
-curl -fsSL .../main/kit/install.sh | sh -s -- --ref v0.3.0 --dry-run
+curl -fsSL .../main/kit/install.sh | sh -s -- --ref v1.0.0 --dry-run
 ```
 
 Details of the decision:

@@ -37,7 +37,7 @@ no cae a `main` por su cuenta.
 
 ```bash
 # tag publicado
-curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v0.3.0
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v1.0.0
 
 # código no publicado (último commit de main)
 curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref main
@@ -50,7 +50,7 @@ Los flags van después de `-s --` porque `sh` los recibe como argumentos del scr
 ```bash
 curl -fsSL -o /tmp/opencode-install.sh https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh
 less /tmp/opencode-install.sh
-sh /tmp/opencode-install.sh --ref v0.3.0
+sh /tmp/opencode-install.sh --ref v1.0.0
 ```
 
 Ejecutado como archivo, el script hace lo mismo: sin árbol del kit al lado, descarga el
@@ -60,11 +60,11 @@ tarball y se re-ejecuta desde ahí.
 
 ```bash
 # una vez, para fijar el artefacto
-curl -fsSL -o kit.tar.gz https://codeload.github.com/naxrowdev/opencode-dev-team/tar.gz/v0.3.0
+curl -fsSL -o kit.tar.gz https://codeload.github.com/naxrowdev/opencode-dev-team/tar.gz/v1.0.0
 sha256sum kit.tar.gz        # en macOS: shasum -a 256 kit.tar.gz
 
 # en otra máquina, con ese hash
-curl -fsSL .../main/kit/install.sh | sh -s -- --ref v0.3.0 --sha256 <hash>
+curl -fsSL .../main/kit/install.sh | sh -s -- --ref v1.0.0 --sha256 <hash>
 ```
 
 El checksum cubre el **tarball**, no el script; para el script está la variante de revisión
