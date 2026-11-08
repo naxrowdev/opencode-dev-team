@@ -61,14 +61,19 @@ Tareas pequeñas (bug puntual, ajuste estilístico) no necesitan todo el pipelin
 
 ## Reglas de colaboración
 
-- **Subagentes empiezan con contexto limpio.** La delegación incluye: objetivo, archivos/módulos relevantes, criterios de aceptación o ticket de origen, y restricciones del stack. Nada de “mira el proyecto y haz algo”.
-- **Evidencia antes de declarar “listo”.** Nada se marca como terminado sin correr los comandos de verificación (skill `verification-before-completion`). Los claims de éxito van acompañados del output real.
+- **Plan primero, código después**: antes de implementar cualquier cambio, presenta un plan al usuario.
+  - **Cambios grandes** (features, refactors multi-archivo, cambios de arquitectura): crea un plan en `docs/plans/YYYY-MM-DD-<feature>.md` usando la skill `writing-plans` — tareas bite-sized con archivos, nombres, interfaces y test de aceptación definidos. Espera confirmación del usuario antes de ejecutar.
+  - **Cambios pequeños** (bug fixes puntuales, ajustes de estilo, docs, typos): comenta el plan directamente en la respuesta (inline) — objetivo, archivos a tocar, criterio de aceptación. No necesitas archivo de plan.
+  - Clasificas la escala en el primer mensaje y lo dices en voz alta ("pipeline completo" vs "pipeline reducido").
+  - **No sales del modo plan hasta que el usuario indique explícitamente el comienzo del cambio** (p. ej. "procede", "dale", "ejecuta", "confirmado"). Mientras tanto, sigues discutiendo, refinando o ajustando el plan.
+- **Subagentes empiezan con contexto limpio.** La delegación incluye: objetivo, archivos/módulos relevantes, criterios de aceptación o ticket de origen, y restricciones del stack. Nada de "mira el proyecto y haz algo".
+- **Evidencia antes de declarar "listo".** Nada se marca como terminado sin correr los comandos de verificación (skill `verification-before-completion`). Los claims de éxito van acompañados del output real.
 - **Estado guardado antes de cerrar fase.** Al terminar cada tarea o fase, el tech-lead actualiza `docs/context/STATE.md` y `docs/context/decisions-log.md` (skill `context-persistence`): la memoria entre sesiones es el repo, no un plugin.
 - **Contexto de la sesión anterior, siempre.** `docs/context/STATE.md` se inyecta automáticamente como instrucción ambient (config `instructions` en `opencode.jsonc`): todo agente parte de ahí. Pero es una **afirmación a verificar**: contrástala con el repo antes de planificar; si hay drift, el tech-lead actualiza `STATE.md` antes de seguir.
 - **Aprobación de usuario para**: push, merge, despliegue, migraciones destructivas, secretos reales. El equipo prepara todo y entrega los comandos; el usuario ejecuta lo irreversible.
 - **`.env` nunca se edita ni se commit-tea**; se agrega la variable en `.env.example` con valor placeholder.
 - **Migraciones Drizzle**: las genera el backend-dev, pero se aplican solo con aprobación explícita del usuario; nunca `drizzle-kit push` contra datos sin confirmar.
-- **Idioma**: documentación de producto (PRD, specs, UX) en **español neutro** (sin voseo: “tú” e imperativo estándar); código, comentarios, nombres de identificadores, commits y ADRs en inglés.
+- **Idioma**: documentación de producto (PRD, specs, UX) en **español neutro** (sin voseo: "tú" e imperativo estándar); código, comentarios, nombres de identificadores, commits y ADRs en inglés.
 
 ## Entrega de cambios: commit, push y tag
 
