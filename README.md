@@ -54,6 +54,7 @@ kit/                  # install.sh + templates/ (contexto vacío) + selftest.sh:
 - **Contexto entre sesiones**: `docs/context/STATE.md` (estado vivo, **auto-inyectado en todas las sesiones** vía `instructions` en `opencode.jsonc`, ~450 tokens) + `decisions-log.md` (bajo demanda). La skill `context-persistence` define cuándo actualizarlo y la regla de que solo contiene estado factual. Sin `claude-mem` ni costos de API.
 - **Menor código**: la skill `code-simplification` es la filosofía del plugin `ponytail` vendida localmente — "el mejor código es el que nunca se escribe", sin inyectar reglas por turno. El `code-reviewer` la usa como rúbrica.
 - **Ahorro de tokens**: `tool_output` trunca outputs de herramientas (más de 1000 líneas / 32 KB guarda en disco, recuperable) y `compaction` compacta el historial automáticamente conservando ~25k tokens recientes. Reversible desde `opencode.jsonc`.
+- **Modelos por rol (opcional)**: por defecto los 12 roles usan el modelo de la sesión (`/models`). Para repartir modelos, `opencode.jsonc` trae un bloque `agents` comentado con los 12 IDs y la guía `docs/guides/models-per-role.md` explica cómo activarlo, cambiarlo y qué no hace OpenCode (no hay failover automático).
 - Plugins considerados y descartados (2026-11-06): `claude-mem`, `ponytail`, `headroom` — evaluados (compatibles con OpenCode V2) pero apartados por costo continuo o dependencias de runtime; requiere ADR para revertir la decisión.
 
 ## Stack fijo del equipo

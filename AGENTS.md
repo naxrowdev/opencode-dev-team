@@ -107,8 +107,9 @@ Reglas de la entrega:
 | Contexto entre sesiones | Recuperar `STATE.md` al inicio + actualizarlo al cerrar fase (skill `context-persistence`) | `docs/context/` |
 | Menor código posible | Skill `code-simplification` (filosofía vendorizada de `ponytail`): el diff más corto que funcione | Todos los agentes que escriben código |
 | Ahorro de tokens | `tool_output` (trunca outputs de más de 1000 líneas / 32 KB y guarda el resto en disco) + `compaction` automática (conserva ~25k tokens recientes) | `opencode.jsonc` |
+| Modelo por rol (opcional) | Bloque `agents` de `opencode.jsonc`, comentado por defecto: sin él, todos los roles usan el modelo de la sesión (`/models`) | `docs/guides/models-per-role.md` |
 
-Cambiar este mecanismo (o agregar plugins externos de memoria/contexto) requiere ADR + aprobación del usuario.
+Cambiar este mecanismo (o agregar plugins externos de memoria/contexto) requiere ADR + aprobación del usuario. Los modelos por rol no son un default del kit: el usuario los habilita y edita cuando quiere.
 
 ## Estructura del repositorio
 

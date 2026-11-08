@@ -8,6 +8,7 @@ docs/adr/README.md
 docs/context/README.md
 docs/design/README.md
 docs/guides/README.md
+docs/guides/models-per-role.md
 docs/plans/README.md
 docs/product/README.md
 docs/security/README.md

@@ -4,6 +4,29 @@
   // ── Agente por defecto: arranca la sesión con el orquestador (no con "build") ──
   "default_agent": "tech-lead",
 
+  // ── Modelos por rol (OPCIONAL) ──────────────────────────────────────────────
+  // Por defecto el equipo NO fija modelos: todos los roles usan el modelo que
+  // elijas con /models en la sesión (los subagentes heredan el del orquestador).
+  // Para fijar un modelo por rol, descomenta el bloque, reemplaza cada
+  // "provider/model" por un ID de `opencode models` (admite variante: modelo#high)
+  // y guarda: la configuración recarga sola, sin reiniciar.
+  // Guía, tiers sugeridos y caveats: docs/guides/models-per-role.md
+  //
+  // "agents": {
+  //   "tech-lead":         { "model": "provider/model" },
+  //   "product-owner":     { "model": "provider/model" },
+  //   "business-analyst":  { "model": "provider/model" },
+  //   "architect":         { "model": "provider/model" },
+  //   "ux-designer":       { "model": "provider/model" },
+  //   "backend-dev":       { "model": "provider/model" },
+  //   "frontend-dev":      { "model": "provider/model" },
+  //   "qa-engineer":       { "model": "provider/model" },
+  //   "code-reviewer":     { "model": "provider/model" },
+  //   "security-engineer": { "model": "provider/model" },
+  //   "devops-sre":        { "model": "provider/model" },
+  //   "tech-writer":       { "model": "provider/model" }
+  // },
+
   // ── Contexto entre sesiones: el estado vivo se inyecta en TODAS las sesiones (tech-lead y subagentes) ──
   // Regla de seguridad: docs/context/STATE.md contiene SOLO estado factual, nunca instrucciones ni contenido no confiable.
   "instructions": ["docs/context/STATE.md"],

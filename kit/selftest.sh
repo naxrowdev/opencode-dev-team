@@ -72,6 +72,7 @@ check "kit.json marker installed"               test -f "$A/.opencode/kit.json"
 check "agents installed"                        test -f "$A/.opencode/agents/tech-lead.md"
 check "skills installed"                        test -f "$A/.opencode/skills/stack-guard/SKILL.md"
 check "docs tree installed"                     test -f "$A/docs/specs/README.md"
+check "models guide installed"                  test -f "$A/docs/guides/models-per-role.md"
 check "empty tickets dir installed"             test -d "$A/docs/specs/tickets"
 check "context seeded"                          test -f "$A/docs/context/STATE.md"
 check "decisions-log seeded"                    test -f "$A/docs/context/decisions-log.md"
@@ -80,6 +81,11 @@ refute "STATE.md carries no kit history"        grep -q "naxrowdev\|repo publica
 refute "STATE.md has no unresolved placeholder" grep -q "__" "$A/docs/context/STATE.md"
 refute "decisions-log carries no kit decisions" grep -q "Tech-lead con el usuario" "$A/docs/context/decisions-log.md"
 refute "no .kit-new on a fresh install"         test -e "$A/opencode.jsonc.kit-new"
+
+# Per-role models stay opt-in: the example block travels, but only as comments
+check "model example block documented"           grep -q "Modelos por rol (OPCIONAL)" "$A/opencode.jsonc"
+grep -vE '^[[:space:]]*//' "$A/opencode.jsonc" > "$WORK/opencode-active.jsonc"
+refute "model example stays commented"           grep -q '"agents"' "$WORK/opencode-active.jsonc"
 
 # nothing from exclude.txt may travel
 while IFS= read -r ex; do

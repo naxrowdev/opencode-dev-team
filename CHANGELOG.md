@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Per-role models are documented as **optional and user-owned**, never a kit default:
+  `opencode.jsonc` ships a commented `agents` block with the 12 role IDs, `AGENTS.md`
+  gains a row in the native-mechanisms table, and the new
+  `docs/guides/models-per-role.md` covers activation, tier suggestions, hot reload,
+  the `/models` scope, and the absence of automatic failover. `kit/include.txt` now
+  installs the guide into target projects and `kit/selftest.sh` asserts that the guide
+  travels and that the example block stays commented (no active `agents` key).
 - Every agent now delivers the `commit`, `push` and `tag` commands for the change it
   just made, and stops there: the commands go in the report, the user runs them. This
   is not a preference — `git push` was already globally denied in `opencode.jsonc`, so
