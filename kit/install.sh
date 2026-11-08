@@ -1,7 +1,12 @@
 #!/bin/sh
 # install.sh — install the agentic dev team kit into a target project.
 #
+# Local mode (from a clone or worktree):
 #   kit/install.sh [TARGET_DIR] [--dry-run] [--force]
+#
+# Curl mode (no clone: this file fetches a kit release tarball and runs it):
+#   curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
+#   curl -fsSL <misma-url> | sh -s -- --ref v0.3.0 --dry-run
 #
 # Copies the kit-owned files (.opencode/agents, .opencode/skills, docs READMEs),
 # seeds an EMPTY project context from kit/templates/, and never carries over the
@@ -10,9 +15,147 @@
 # Safe to re-run: kit-owned files are refreshed, docs/context/* is write-once.
 # This script NEVER runs git. See docs/guides/installing-into-a-project.md.
 #
-# POSIX sh, no dependencies beyond the coreutils.
+# POSIX sh, no dependencies beyond the coreutils (curl + tar in curl mode).
 
 set -eu
+
+usage() {
+  cat <<'EOF'
+Usage: kit/install.sh [TARGET_DIR] [options]                         (local)
+       curl -fsSL <url>/kit/install.sh | sh [-s -- options]          (curl)
+
+  TARGET_DIR      Project to install into. Omit it to install into the folder
+                  you are in (recommended: cd into your project first).
+  --dry-run       Print the plan, write nothing.
+  --force         Overwrite a .opencode/ that was not installed by this kit.
+  -h, --help      Show this help.
+
+Curl mode only (the script downloads a kit tarball and runs it):
+  --ref <tag|rama>  Version to install. Default: the latest GitHub release.
+  --sha256 <hex>    Verify the downloaded tarball (sha256sum or shasum -a 256).
+  --tarball <path>  Install from a local tarball instead of the network.
+  --repo <owner/repo>  Source repository (default: naxrowdev/opencode-dev-team).
+
+Copies kit-owned files, seeds an empty docs/context/, and refreshes
+.opencode/kit.json. Never touches docs/context/ if it already exists.
+EOF
+}
+
+die() {
+  printf 'error: %s\n' "$*" >&2
+  exit 1
+}
+
+# ── Curl mode: fetch the kit tarball and run the extracted copy ───────────────
+# When this file is piped to `sh`, $0 is the shell and the kit tree is not on
+# disk. This block downloads a released tarball into a temp dir, runs that copy
+# with the same arguments, and cleans up. The extracted copy always sees its
+# assets, so the bootstrap cannot recurse.
+ODT_REPO_DEFAULT="naxrowdev/opencode-dev-team"
+ODT_DIR=$(CDPATH= cd -- "$(dirname -- "${0:-sh}")/.." 2>/dev/null && pwd || true)
+if [ ! -d "$ODT_DIR/.opencode/agents" ] || [ ! -f "$ODT_DIR/kit/include.txt" ]; then
+  ODT_REPO=${ODT_REPO:-$ODT_REPO_DEFAULT}
+  ODT_REF=""
+  ODT_SHA=""
+  ODT_TARBALL=""
+  ODT_DRY=0
+  ODT_FORCE=0
+  ODT_HELP=0
+  ODT_TARGET=""
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --ref)       [ $# -ge 2 ] || die "falta el valor de --ref"; ODT_REF=$2; shift 2 ;;
+      --ref=*)     ODT_REF=${1#*=}; shift ;;
+      --sha256)    [ $# -ge 2 ] || die "falta el valor de --sha256"; ODT_SHA=$2; shift 2 ;;
+      --sha256=*)  ODT_SHA=${1#*=}; shift ;;
+      --tarball)   [ $# -ge 2 ] || die "falta el valor de --tarball"; ODT_TARBALL=$2; shift 2 ;;
+      --tarball=*) ODT_TARBALL=${1#*=}; shift ;;
+      --repo)      [ $# -ge 2 ] || die "falta el valor de --repo"; ODT_REPO=$2; shift 2 ;;
+      --repo=*)    ODT_REPO=${1#*=}; shift ;;
+      --dry-run)   ODT_DRY=1; shift ;;
+      --force)     ODT_FORCE=1; shift ;;
+      -h|--help)   ODT_HELP=1; shift ;;
+      -*)          die "opción desconocida en modo curl: $1 (ver --help)" ;;
+      *)
+        [ -z "$ODT_TARGET" ] || die "solo se acepta un TARGET_DIR"
+        ODT_TARGET=$1
+        shift
+        ;;
+    esac
+  done
+
+  if [ "$ODT_HELP" -eq 1 ]; then usage; exit 0; fi
+
+  odt_fetch() {
+    case "$1" in
+      http://*|https://*|file://*) ;;
+      *) die "URL de tarball no soportada: $1" ;;
+    esac
+    curl -fsSL "$1" -o "$2" || die "no se pudo descargar $1"
+  }
+
+  odt_verify() {
+    odt_want=$(printf '%s' "$2" | tr 'A-F' 'a-f')
+    if command -v sha256sum >/dev/null 2>&1; then
+      odt_got=$(sha256sum "$1" | cut -d' ' -f1)
+    elif command -v shasum >/dev/null 2>&1; then
+      odt_got=$(shasum -a 256 "$1" | cut -d' ' -f1)
+    else
+      die "no hay sha256sum ni shasum para verificar --sha256"
+    fi
+    [ "$odt_got" = "$odt_want" ] || die "checksum no coincide: esperado $odt_want, obtenido $odt_got"
+  }
+
+  odt_latest_ref() {
+    # GitHub redirects /releases/latest to the tag page: no API call, no rate limit.
+    odt_url=$(curl -fsS -o /dev/null -w '%{redirect_url}' "https://github.com/$1/releases/latest" 2>/dev/null || true)
+    case "$odt_url" in
+      */releases/tag/*) printf '%s' "${odt_url##*/releases/tag/}" ;;
+      *) return 1 ;;
+    esac
+  }
+
+  command -v curl >/dev/null 2>&1 || die "hace falta 'curl' para el modo curl"
+  command -v tar  >/dev/null 2>&1 || die "hace falta 'tar' para el modo curl"
+
+  ODT_TMP=$(mktemp -d "${TMPDIR:-/tmp}/opencode-dev-team.XXXXXX") || die "no se pudo crear un directorio temporal"
+  trap 'rm -rf "$ODT_TMP"' 0
+
+  ODT_ARCHIVE="$ODT_TMP/kit.tar.gz"
+  if [ -n "$ODT_TARBALL" ]; then
+    [ -f "$ODT_TARBALL" ] || die "no existe el tarball: $ODT_TARBALL"
+    cp "$ODT_TARBALL" "$ODT_ARCHIVE"
+    ODT_REF=${ODT_REF:-local}
+  else
+    if [ -n "${ODT_TARBALL_URL:-}" ]; then
+      odt_url=$ODT_TARBALL_URL
+      ODT_REF=${ODT_REF:-url-override}
+    else
+      if [ -z "$ODT_REF" ]; then
+        ODT_REF=$(odt_latest_ref "$ODT_REPO") || die "no se pudo resolver la última versión estable de $ODT_REPO (¿repo publicado y con releases?); usa --ref <tag|rama> (ej.: --ref main)"
+      fi
+      odt_url="https://codeload.github.com/$ODT_REPO/tar.gz/$ODT_REF"
+    fi
+    printf 'descargando %s\n' "$odt_url"
+    odt_fetch "$odt_url" "$ODT_ARCHIVE"
+  fi
+
+  if [ -n "$ODT_SHA" ]; then odt_verify "$ODT_ARCHIVE" "$ODT_SHA"; fi
+
+  mkdir -p "$ODT_TMP/src"
+  tar xzf "$ODT_ARCHIVE" -C "$ODT_TMP/src" || die "no se pudo extraer el tarball del kit"
+  ODT_CHILD=$(ls -d "$ODT_TMP"/src/*/kit/install.sh 2>/dev/null | head -n 1 || true)
+  [ -n "$ODT_CHILD" ] || die "el tarball no contiene kit/install.sh — ¿es el archivo correcto?"
+
+  set --
+  if [ "$ODT_DRY" -eq 1 ]; then set -- "$@" --dry-run; fi
+  if [ "$ODT_FORCE" -eq 1 ]; then set -- "$@" --force; fi
+  if [ -n "$ODT_TARGET" ]; then set -- "$@" "$ODT_TARGET"; fi
+
+  KIT_SOURCE_URL="https://github.com/$ODT_REPO" KIT_REF="$ODT_REF" sh "$ODT_CHILD" "$@"
+  exit $?
+fi
 
 # ── Locations ─────────────────────────────────────────────────────────────────
 KIT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
@@ -25,26 +168,6 @@ TARGET="."
 TARGET_GIVEN=0
 DRY_RUN=0
 FORCE=0
-
-usage() {
-  cat <<'EOF'
-Usage: kit/install.sh [TARGET_DIR] [options]
-
-  TARGET_DIR   Project to install into. Omit it to install into the folder
-               you are in (recommended: cd into your project first).
-  --dry-run    Print the plan, write nothing.
-  --force      Overwrite a .opencode/ that was not installed by this kit.
-  -h, --help   Show this help.
-
-Copies kit-owned files, seeds an empty docs/context/, and refreshes
-.opencode/kit.json. Never touches docs/context/ if it already exists.
-EOF
-}
-
-die() {
-  printf 'error: %s\n' "$*" >&2
-  exit 1
-}
 
 log() {
   if [ "$DRY_RUN" -eq 1 ]; then
@@ -60,6 +183,9 @@ while [ $# -gt 0 ]; do
     --dry-run) DRY_RUN=1 ;;
     --force)   FORCE=1 ;;
     -h|--help) usage; exit 0 ;;
+    --ref|--ref=*|--sha256|--sha256=*|--tarball|--tarball=*|--repo|--repo=*)
+      die "esa opción solo aplica al modo curl (curl -fsSL <url>/kit/install.sh | sh -s -- ...); en modo local no hace falta"
+      ;;
     -*)        die "opción desconocida: $1 (ver --help)" ;;
     *)
       case "$TARGET_GIVEN" in
@@ -147,6 +273,29 @@ C_SEED=0
 C_SKIP=0
 C_CONFLICT=0
 
+# Manifest of kit-owned files: the uninstaller never guesses, it deletes exactly
+# this list. It is built from the SOURCE tree, so files the project added to
+# .opencode/ are not in it. Root config and docs/context are project-owned and
+# stay out (they are create-if-absent / write-once, not kit-owned).
+KIT_FILES=""
+manifest_add() {
+  KIT_FILES="${KIT_FILES}${1}
+"
+}
+
+# Find must not run in a pipeline: the while body has to stay in this shell for
+# KIT_FILES to accumulate.
+manifest_add_tree() {
+  _tree=$1
+  _list=$(find "$_tree" -type f -print 2>/dev/null || true)
+  while IFS= read -r _f; do
+    [ -n "$_f" ] || continue
+    manifest_add "${_f#"$KIT_ROOT"/}"
+  done <<EOF
+$_list
+EOF
+}
+
 copy_entry() {
   rel=$1
   case "$rel" in
@@ -169,9 +318,11 @@ copy_entry() {
     if [ -d "$src" ]; then
       log "copy    $rel_real/"
       [ "$DRY_RUN" -eq 1 ] || { mkdir -p "$TARGET/$rel_real"; cp -R "$src/." "$TARGET/$rel_real/"; }
+      manifest_add_tree "$src"
     else
       log "copy    $rel_real"
       [ "$DRY_RUN" -eq 1 ] || { mkdir -p "$TARGET/$(dirname "$rel_real")"; cp "$src" "$TARGET/$rel_real"; }
+      manifest_add "$rel_real"
     fi
     C_COPY=$((C_COPY + 1))
   done
@@ -231,11 +382,18 @@ seed_context "$KIT_DIR/templates/decisions-log.md" "docs/context/decisions-log.m
 
 # Install marker (also the signal that .opencode/ belongs to this kit)
 if [ "$DRY_RUN" -eq 0 ]; then
-  src_desc="local:$KIT_ROOT"
-  if command -v git >/dev/null 2>&1; then
-    url=$(git -C "$KIT_ROOT" remote get-url origin 2>/dev/null || true)
-    if [ -n "$url" ]; then src_desc=$url; fi
+  src_desc=${KIT_SOURCE_URL:-}
+  if [ -z "$src_desc" ]; then
+    src_desc="local:$KIT_ROOT"
+    if command -v git >/dev/null 2>&1; then
+      url=$(git -C "$KIT_ROOT" remote get-url origin 2>/dev/null || true)
+      if [ -n "$url" ]; then src_desc=$url; fi
+    fi
   fi
+  ref_desc=${KIT_REF:-local}
+  files_block=$(printf '%s' "$KIT_FILES" | sed -e '/^$/d' | sort -u \
+    | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/^/    "/' -e 's/$/",/' \
+    | sed -e '$ s/,$//')
   mkdir -p "$TARGET/.opencode"
   cat > "$TARGET/.opencode/kit.json" <<EOF
 {
@@ -243,7 +401,11 @@ if [ "$DRY_RUN" -eq 0 ]; then
   "version": "$KIT_VERSION",
   "installed_at": "$TODAY",
   "source": "$src_desc",
-  "manifest": "kit/include.txt"
+  "ref": "$ref_desc",
+  "manifest": "kit/include.txt",
+  "files": [
+$files_block
+  ]
 }
 EOF
   log "write   .opencode/kit.json ($KIT_VERSION)"

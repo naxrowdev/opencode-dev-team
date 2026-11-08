@@ -22,7 +22,7 @@ git status   # revisar que solo suba lo esperado: .opencode/, docs/, AGENTS.md, 
 git commit -m "feat(config): agentic dev team v0.1.0 — 12 agentes, 55 skills, context7 mcp, permisos por rol"
 ```
 
-> `.env` está en `.gitignore`: aunque exista localmente, no entra al commit. Verificá con `git status` que no aparezca.
+> `.env` está en `.gitignore`: aunque exista localmente, no entra al commit. Verifica con `git status` que no aparezca.
 
 ## 2. Conectar y subir
 
@@ -35,9 +35,36 @@ git tag -a v0.1.0 -m "Agentic dev team 0.1.0 — pre-release"
 git push origin v0.1.0
 ```
 
-## 3. Distribuir a otro proyecto (después de publicar)
+## 3. Publicar la Release del tag
 
-El kit se inyecta en el proyecto destino con el installer — no se copia a mano. La guía completa está en `docs/guides/installing-into-a-project.md`.
+El instalador en modo curl resuelve **la última GitHub Release** vía
+`https://github.com/<repo>/releases/latest`. Un tag sin release no alcanza: el redirect no
+existe y el one-liner corta pidiendo `--ref`.
+
+Desde la web: **Releases → Draft a new release →** elegir el tag `v0.3.0` → publicar.
+
+O con GitHub CLI:
+
+```bash
+gh release create v0.3.0 --title "v0.3.0" --notes-file CHANGELOG.md
+```
+
+Repite tag + release en cada versión publicada.
+
+## 4. Distribuir a otro proyecto (después de publicar)
+
+El kit se inyecta con el instalador — no se copia a mano. La guía completa está en
+`docs/guides/installing-into-a-project.md`.
+
+```bash
+cd ~/Proyectos/mi-proyecto
+# última estable
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
+# versión fijada
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v0.3.0
+```
+
+Alternativa sin curl (clonar y ejecutar el instalador local):
 
 ```bash
 git clone git@github.com:naxrowdev/opencode-dev-team.git /tmp/opencode-dev-team

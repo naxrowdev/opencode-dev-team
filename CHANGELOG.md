@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `kit/uninstall.sh` removes the kit from a project safely: it reads the install manifest
+  (`.opencode/kit.json` → `"files"`) and deletes exactly those paths, then removes
+  directories left empty with `rmdir` (never `rm -rf`). Default behaviour is **plan
+  only**; `--yes` applies it, `--dry-run` is an explicit alias, `--purge-context` and
+  `--remove-root-config` opt into deleting the seeded project memory and the root config.
+  Manifest paths are validated (relative, no `..`), invalid ones are skipped with a
+  warning, the kit repo is refused as a target, and installations without a manifest are
+  refused with a "reinstall first" message instead of guessing.
+- `kit/install.sh` now records a manifest of every kit-owned file it writes (`"files"` in
+  `.opencode/kit.json`, computed from the source tree that `include.txt` selects, so
+  files the project added are never listed). The seeded `docs/context/STATE.md` /
+  `decisions-log.md` and the root config stay out of it.
+- `docs/adr/0003-kit-manifest-and-uninstall.md` records the manifest contract, why
+  heuristics and `rm -rf` were rejected, and the state of pre-1.0.0 installations.
+- `kit/install.sh` now self-bootstraps, so installing and updating are one command:
+  `curl -fsSL <url>/kit/install.sh | sh`. When the kit tree is not next to `$0`, the script
+  resolves the latest GitHub Release (via the `/releases/latest` redirect, no API call),
+  downloads `codeload.github.com/<repo>/tar.gz/<ref>`, verifies an optional `--sha256`,
+  extracts into `mktemp -d`, runs that copy with the same arguments, and cleans up. Mode is
+  detected from the assets being present, so the extracted copy cannot recurse. New
+  curl-only flags: `--ref`, `--sha256`, `--tarball` (offline), `--repo` (forks); local mode
+  rejects them with an explicit message. `.opencode/kit.json` gains `ref`, and `source`
+  comes from `KIT_SOURCE_URL` in curl mode.
+- `docs/adr/0002-self-bootstrapping-installer.md` records the decision, the latest-stable
+  resolution without the GitHub API, the trust mitigations, and the alternatives rejected
+  (separate bootstrap script, base64 payload, `npx`, API lookup, release assets).
+- `kit/selftest.sh` grows to 109 assertions: the curl-mode section builds a GitHub-shaped
+  tarball of the working tree and drives the real piped path through
+  `ODT_TARBALL_URL=file://` (install, provenance, `--dry-run`, good/bad checksum, tarball
+  without the kit, `--help`, and curl-only flags rejected in local mode), and the uninstall
+  section covers the manifest contents, plan-only behaviour, preservation of user agents
+  and skills, project memory and root config, both optional flags, the legacy-marker
+  refusal, path-traversal skipping, the kit-repo guard, and a full
+  install → uninstall → install cycle.
 - Per-role models are documented as **optional and user-owned**, never a kit default:
   `opencode.jsonc` ships a commented `agents` block with the 12 role IDs, `AGENTS.md`
   gains a row in the native-mechanisms table, and the new
@@ -29,6 +63,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The documented way to install and update the kit is now the curl one-liner; the clone
+  flow stays documented and tested as the air-gapped alternative. `docs/guides/setup-github.md`
+  now requires a GitHub Release per tag, because "latest" is resolved from
+  `/releases/latest`. The installation guide gained the update semantics (kit-owned files
+  refreshed, root config preserved as `*.kit-new`, context untouched, removed files not
+  pruned).
 - The kit's prose (agent prompts, `README.md`, `AGENTS.md`, the installation guide,
   and the installer/selftest messages) now uses **neutral Spanish** instead of
   Rioplatense voseo. Second person "tú" and standard imperative forms replace

@@ -6,24 +6,44 @@ Configuración de proyecto para OpenCode V2 que arma un **equipo completo de des
 
 ## Uso (instalar en otro proyecto)
 
-El kit se **inyecta** en un proyecto existente con `kit/install.sh`: copia agentes, skills y la config, y siembra un `docs/context/` **vacío** — la memoria del kit (`STATE.md`, `decisions-log.md`) nunca viaja; la del proyecto se llena de cero. Guía completa en `docs/guides/installing-into-a-project.md`.
+El kit se **inyecta** en un proyecto existente con un solo comando: descarga la última release, copia agentes, skills y config, y siembra un `docs/context/` **vacío** — la memoria del kit (`STATE.md`, `decisions-log.md`) nunca viaja. Guía completa en `docs/guides/installing-into-a-project.md`.
 
 ```bash
-cd ~/Proyectos/mi-proyecto                                    # la carpeta de TU proyecto
+cd ~/Proyectos/mi-proyecto        # la carpeta de TU proyecto
 
-git clone git@github.com:naxrowdev/opencode-dev-team.git       # el kit entra como carpeta temporal
-sh opencode-dev-team/kit/install.sh --dry-run                 # previsualizar (no escribe nada)
-sh opencode-dev-team/kit/install.sh                           # instalar en la raíz de tu proyecto
+# previsualizar (no escribe nada) / instalar o actualizar a la última estable
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh
 
-sh opencode-dev-team/kit/selftest.sh                          # suite de asserts del instalador
+# versión fijada (tag publicado)
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/install.sh | sh -s -- --ref v0.3.0
 ```
 
-Sin `cd` dentro del clon y sin argumentos: el instalador detecta el clon, inyecta todo en la raíz del proyecto y al terminar te avisa que el clon quedó descartable (`rm -rf opencode-dev-team`). Si prefieres, también puedes pasar la ruta como argumento desde otro lado: `sh /tmp/opencode-dev-team/kit/install.sh ~/Proyectos/mi-proyecto`.
+El script detecta que corre sin el árbol del kit, baja el tarball de la release a un directorio temporal, instala desde ahí y lo limpia. Requiere `curl` + `tar`; el checksum del tarball es opcional (`--sha256`).
+
+Alternativa sin curl (clonar y ejecutar el instalador local), útil para air-gapped o para revisar el árbol completo:
+
+```bash
+git clone git@github.com:naxrowdev/opencode-dev-team.git
+sh opencode-dev-team/kit/install.sh --dry-run     # previsualizar
+sh opencode-dev-team/kit/install.sh               # instalar
+rm -rf opencode-dev-team                          # el clon ya no hace falta
+```
 
 > Pegar el ejemplo tal cual con `/ruta/a/mi-proyecto` hace que el instalador corte
-> con un error claro — es un guard intencional (ver _problemas comunes_ en la guía).
+> con un error claro — es un guard intencional (ver _si el instalador corta_ en la guía).
 
-Re-instalar solo refresca archivos kit-owned: `docs/context/` queda intacto.
+El mismo comando de curl **actualiza** un proyecto ya instalado: refresca agentes, skills y guías, conserva `opencode.jsonc`/`AGENTS.md` (con `*.kit-new` si cambiaron) y nunca toca `docs/context/`.
+
+Para **desinstalar**, el instalador deja un manifiesto en `.opencode/kit.json` y el desinstalador borra solo esos archivos:
+
+```bash
+cd ~/Proyectos/mi-proyecto
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/uninstall.sh | sh         # plan, no borra nada
+curl -fsSL https://raw.githubusercontent.com/naxrowdev/opencode-dev-team/main/kit/uninstall.sh | sh -s -- --yes
+```
+
+Conserva tus agentes y skills propios, `docs/context/` y la config raíz salvo que pases `--purge-context` o `--remove-root-config`. Detalle en `docs/guides/installing-into-a-project.md`.
 
 Para publicar este repo por primera vez, sigue `docs/guides/setup-github.md` (comandos los ejecuta el humano).
 
@@ -46,7 +66,7 @@ AGENTS.md             # reglas del repo: stack fijo, pipeline, convenciones
   kit.json            # marcador generado por el installer en el proyecto destino
 docs/                 # artefactos del pipeline (product/specs/adr/design/plans...)
   context/            # STATE.md + decisions-log.md: memoria entre sesiones
-kit/                  # install.sh + templates/ (contexto vacío) + selftest.sh: lo que viaja al proyecto
+kit/                  # install.sh (modo local y curl) + templates/ + selftest.sh: la herramienta que inyecta el kit
 ```
 
 ## Memoria, minimalismo y tokens (nativo, sin plugins)
